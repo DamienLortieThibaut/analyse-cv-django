@@ -1,0 +1,56 @@
+{% extends 'index.html' %}
+
+{% block title %}GRH Smart · Candidatures{% endblock %}
+
+{% block header_title %}GRH Smart · Candidatures{% endblock %}
+
+{% block content %}
+<div class="container mx-auto space-y-6">
+
+    <!-- HEADER -->
+    <header class="text-center py-12">
+      <div class="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-violet-400 to-violet-300 grid place-items-center shadow-lg mb-6">
+        <svg class="w-10 h-10 text-slate-900" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2 .89 2 2 2 2-.89 2-2-.89-2-2-2-2 .89-2 2zm4 18v-6h2.5l-2.54-7.63A1.5 1.5 0 0 0 18.54 8H16c-.8 0-1.54.37-2 1l-3 4v7h2v7h7v-3z"/>
+        </svg>
+      </div>
+      <h1 class="text-3xl font-bold text-slate-100 mb-4">Gestion des candidatures</h1>
+      <p class="text-slate-400 max-w-2xl mx-auto">
+        Centralisez et gérez toutes vos candidatures RH. Suivez le processus de recrutement, 
+        évaluez les profils et prenez des décisions éclairées.
+      </p>
+    </header>
+
+    <!-- ACTIONS RAPIDES -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+      <a href="{% url 'candidatures:list' %}" class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 hover:bg-slate-900/80 transition group">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-violet-600 grid place-items-center group-hover:scale-110 transition">
+            <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-semibold text-slate-100 mb-1">Voir toutes les candidatures</h3>
+            <p class="text-sm text-slate-400">Consultez la liste complète et filtrez par critères</p>
+          </div>
+        </div>
+      </a>
+      
+      <a href="" class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 hover:bg-slate-900/80 transition group">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-emerald-600 grid place-items-center group-hover:scale-110 transition">
+            <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-semibold text-slate-100 mb-1">Nouvelle candidature</h3>
+            <p class="text-sm text-slate-400">Ajouter un nouveau candidat au système</p>
+          </div>
+        </div>
+      </a>
+    </section>
+
+</div>
+{% endblock %}
