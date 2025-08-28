@@ -1,0 +1,56 @@
+<div class="card">
+  <div class="card-header">
+    <h6 class="mb-0">
+      <i class="fas fa-user me-2"></i>
+      Mon profil
+    </h6>
+  </div>
+  <div class="card-body">
+    <div class="text-center mb-3">
+      <div
+        class="avatar-placeholder bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center"
+        style="width: 80px; height: 80px; font-size: 2rem"
+      >
+        {{ user.first_name.0|default:"U" }}{{ user.last_name.0|default:"" }}
+      </div>
+    </div>
+
+    <div class="text-center">
+      <h6 class="mb-1">{{ user.get_full_name|default:user.email }}</h6>
+      <span class="role-badge role-{{ user.role }}"
+        >{{ user.get_role_display }}</span
+      >
+    </div>
+
+    <hr />
+
+    <div class="small">
+      <div class="row mb-2">
+        <div class="col-4"><strong>Email :</strong></div>
+        <div class="col-8">{{ user.email }}</div>
+      </div>
+
+      {% if user.telephone %}
+      <div class="row mb-2">
+        <div class="col-4"><strong>Tél :</strong></div>
+        <div class="col-8">{{ user.telephone }}</div>
+      </div>
+      {% endif %}
+
+      <div class="row mb-2">
+        <div class="col-4"><strong>Inscrit :</strong></div>
+        <div class="col-8">{{ user.date_joined|date:"d/m/Y" }}</div>
+      </div>
+    </div>
+
+    <div class="d-grid mt-3">
+      <a
+        href="{% url 'accounts:profile' %}"
+        class="btn btn-outline-primary btn-sm"
+      >
+        <i class="fas fa-edit me-1"></i>
+        Modifier mon profil
+      </a>
+    </div>
+  </div>
+</div>

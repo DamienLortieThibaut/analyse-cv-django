@@ -1,0 +1,164 @@
+{% extends 'base.html' %} {% block title %}Mon profil - {{ block.super }}{%
+endblock %} {% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="fas fa-user-edit me-2"></i>
+            Modifier mon profil
+          </h5>
+        </div>
+        <div class="card-body">
+          {% if form.non_field_errors %}
+          <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+          {% endif %}
+
+          <form method="post" novalidate>
+            {% csrf_token %}
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label
+                  for="{{ form.first_name.id_for_label }}"
+                  class="form-label"
+                >
+                  {{ form.first_name.label }}
+                </label>
+                {{ form.first_name }} {% if form.first_name.errors %}
+                <div class="invalid-feedback d-block">
+                  {{ form.first_name.errors.0 }}
+                </div>
+                {% endif %}
+              </div>
+              <div class="col-md-6 mb-3">
+                <label
+                  for="{{ form.last_name.id_for_label }}"
+                  class="form-label"
+                >
+                  {{ form.last_name.label }}
+                </label>
+                {{ form.last_name }} {% if form.last_name.errors %}
+                <div class="invalid-feedback d-block">
+                  {{ form.last_name.errors.0 }}
+                </div>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="{{ form.email.id_for_label }}" class="form-label">
+                {{ form.email.label }}
+              </label>
+              {{ form.email }} {% if form.email.errors %}
+              <div class="invalid-feedback d-block">
+                {{ form.email.errors.0 }}
+              </div>
+              {% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label for="{{ form.telephone.id_for_label }}" class="form-label">
+                {{ form.telephone.label }}
+              </label>
+              {{ form.telephone }} {% if form.telephone.errors %}
+              <div class="invalid-feedback d-block">
+                {{ form.telephone.errors.0 }}
+              </div>
+              {% endif %}
+            </div>
+
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save me-2"></i>
+                Enregistrer les modifications
+              </button>
+              <a
+                href="{% url 'accounts:dashboard' %}"
+                class="btn btn-secondary"
+              >
+                <i class="fas fa-times me-2"></i>
+                Annuler
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Changement de mot de passe -->
+      <div class="card mt-4">
+        <div class="card-header">
+          <h6 class="mb-0">
+            <i class="fas fa-key me-2"></i>
+            Changer mon mot de passe
+          </h6>
+        </div>
+        <div class="card-body">
+          <p class="text-muted">
+            Pour des raisons de sécurité, le changement de mot de passe
+            nécessite une procédure séparée.
+          </p>
+          <a href="#" class="btn btn-outline-warning">
+            <i class="fas fa-lock me-2"></i>
+            Changer mon mot de passe
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      {% include 'accounts/widgets/profil_widget.html' %}
+
+      <!-- Informations sur le rôle -->
+      <div class="card mt-4">
+        <div class="card-header">
+          <h6 class="mb-0">
+            <i class="fas fa-info-circle me-2"></i>
+            Mon rôle
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="text-center">
+            <span class="role-badge role-{{ user.role }} mb-3 d-inline-block"
+              >{{ user.get_role_display }}</span
+            >
+          </div>
+
+          {% if user.role == 'admin' %}
+          <p class="small text-muted">
+            En tant qu'administrateur, vous avez accès à toutes les
+            fonctionnalités de la plateforme et pouvez gérer les utilisateurs.
+          </p>
+          {% elif user.role == 'recruteur' %}
+          <p class="small text-muted">
+            En tant que recruteur, vous pouvez publier des offres d'emploi et
+            gérer les candidatures reçues.
+          </p>
+          {% elif user.role == 'candidat' %}
+          <p class="small text-muted">
+            En tant que candidat, vous pouvez postuler aux offres d'emploi et
+            gérer vos candidatures.
+          </p>
+          {% endif %}
+
+          <hr />
+
+          <div class="small">
+            <div class="row">
+              <div class="col-6"><strong>Membre depuis :</strong></div>
+              <div class="col-6">{{ user.date_joined|date:"d/m/Y" }}</div>
+            </div>
+            <div class="row mt-1">
+              <div class="col-6"><strong>Dernière connexion :</strong></div>
+              <div class="col-6">
+                {{ user.last_login|date:"d/m/Y"|default:"Jamais" }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

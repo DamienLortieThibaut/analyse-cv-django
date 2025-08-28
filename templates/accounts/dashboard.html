@@ -1,0 +1,388 @@
+{% extends 'base.html' %} {% block title %}Tableau de bord - {{ block.super }}{%
+endblock %} {% block content %}
+<div class="container mt-4">
+  <!-- En-tête avec informations utilisateur -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card bg-primary text-white">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-md-8">
+              <h2 class="mb-1">
+                <i class="fas fa-tachometer-alt me-2"></i>
+                Bonjour, {{ user.get_full_name|default:user.email }}
+              </h2>
+              <p class="mb-0 opacity-75">
+                Bienvenue sur votre tableau de bord
+                <span
+                  class="role-badge ms-2"
+                  style="background-color: rgba(255, 255, 255, 0.2)"
+                >
+                  {{ user.get_role_display }}
+                </span>
+              </p>
+            </div>
+            <div class="col-md-4 text-md-end">
+              <div class="text-white">
+                <small class="d-block">Dernière connexion</small>
+                <strong
+                  >{{ user.last_login|date:"d/m/Y à H:i"|default:"Première
+                  connexion" }}</strong
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenu spécifique au rôle -->
+  {% if user.role == 'admin' %}
+  <!-- Dashboard Administrateur -->
+  <div class="row">
+    <div class="col-lg-3 col-md-6 mb-4">
+      <div class="card border-left-primary h-100">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col">
+              <div
+                class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+              >
+                Utilisateurs totaux
+              </div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">
+                {{ stats.total_users }}
+              </div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-users fa-2x text-primary"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 mb-4">
+      <div class="card border-left-warning h-100">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col">
+              <div
+                class="text-xs font-weight-bold text-warning text-uppercase mb-1"
+              >
+                Recruteurs
+              </div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">
+                {{ stats.recruteurs }}
+              </div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-user-tie fa-2x text-warning"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 mb-4">
+      <div class="card border-left-success h-100">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col">
+              <div
+                class="text-xs font-weight-bold text-success text-uppercase mb-1"
+              >
+                Candidats
+              </div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">
+                {{ stats.candidats }}
+              </div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-user-graduate fa-2x text-success"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 mb-4">
+      <div class="card border-left-info h-100">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col">
+              <div
+                class="text-xs font-weight-bold text-info text-uppercase mb-1"
+              >
+                Candidatures
+              </div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">
+                {{ stats.candidatures }}
+              </div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-file-alt fa-2x text-info"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="fas fa-chart-line me-2"></i>
+            Actions rapides - Administration
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <a
+                href="{% url 'accounts:admin_users' %}"
+                class="btn btn-outline-primary w-100"
+              >
+                <i class="fas fa-users me-2"></i>
+                Gérer les utilisateurs
+              </a>
+            </div>
+            <div class="col-md-6 mb-3">
+              <a href="/admin/" class="btn btn-outline-secondary w-100">
+                <i class="fas fa-cogs me-2"></i>
+                Interface d'administration
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header">
+          <h6 class="mb-0">
+            <i class="fas fa-clock me-2"></i>
+            Activité récente
+          </h6>
+        </div>
+        <div class="card-body">
+          <p class="text-muted">Aucune activité récente</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% elif user.role == 'recruteur' %}
+  <!-- Dashboard Recruteur -->
+  <div class="row">
+    <div class="col-md-4 mb-4">
+      <div class="card text-white bg-warning">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h6 class="card-title">Offres publiées</h6>
+              <h3 class="mb-0">{{ stats.mes_offres|default:0 }}</h3>
+            </div>
+            <div class="align-self-center">
+              <i class="fas fa-briefcase fa-2x"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="card text-white bg-info">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h6 class="card-title">Candidatures reçues</h6>
+              <h3 class="mb-0">{{ stats.candidatures_recues|default:0 }}</h3>
+            </div>
+            <div class="align-self-center">
+              <i class="fas fa-file-alt fa-2x"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="card text-white bg-success">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h6 class="card-title">Entretiens planifiés</h6>
+              <h3 class="mb-0">{{ stats.entretiens|default:0 }}</h3>
+            </div>
+            <div class="align-self-center">
+              <i class="fas fa-calendar-check fa-2x"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="fas fa-tasks me-2"></i>
+            Actions rapides - Recrutement
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <button class="btn btn-primary w-100">
+                <i class="fas fa-plus me-2"></i>
+                Publier une offre
+              </button>
+            </div>
+            <div class="col-md-6 mb-3">
+              <button class="btn btn-outline-primary w-100">
+                <i class="fas fa-search me-2"></i>
+                Rechercher des candidats
+              </button>
+            </div>
+            <div class="col-md-6 mb-3">
+              <button class="btn btn-outline-warning w-100">
+                <i class="fas fa-eye me-2"></i>
+                Mes offres
+              </button>
+            </div>
+            <div class="col-md-6 mb-3">
+              <button class="btn btn-outline-info w-100">
+                <i class="fas fa-inbox me-2"></i>
+                Candidatures reçues
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      {% include 'accounts/widgets/profil_widget.html' %}
+    </div>
+  </div>
+
+  {% elif user.role == 'candidat' %}
+  <!-- Dashboard Candidat -->
+  <div class="row">
+    <div class="col-md-4 mb-4">
+      <div class="card text-white bg-success">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h6 class="card-title">Mes candidatures</h6>
+              <h3 class="mb-0">{{ stats.mes_candidatures|default:0 }}</h3>
+            </div>
+            <div class="align-self-center">
+              <i class="fas fa-paper-plane fa-2x"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="card text-white bg-warning">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h6 class="card-title">En attente</h6>
+              <h3 class="mb-0">
+                {{ stats.candidatures_en_attente|default:0 }}
+              </h3>
+            </div>
+            <div class="align-self-center">
+              <i class="fas fa-clock fa-2x"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="card text-white bg-info">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h6 class="card-title">Entretiens</h6>
+              <h3 class="mb-0">{{ stats.mes_entretiens|default:0 }}</h3>
+            </div>
+            <div class="align-self-center">
+              <i class="fas fa-handshake fa-2x"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="fas fa-search me-2"></i>
+            Actions rapides - Recherche d'emploi
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <button class="btn btn-primary w-100">
+                <i class="fas fa-search me-2"></i>
+                Rechercher des offres
+              </button>
+            </div>
+            <div class="col-md-6 mb-3">
+              <button class="btn btn-outline-primary w-100">
+                <i class="fas fa-upload me-2"></i>
+                Télécharger mon CV
+              </button>
+            </div>
+            <div class="col-md-6 mb-3">
+              <button class="btn btn-outline-success w-100">
+                <i class="fas fa-list me-2"></i>
+                Mes candidatures
+              </button>
+            </div>
+            <div class="col-md-6 mb-3">
+              <button class="btn btn-outline-warning w-100">
+                <i class="fas fa-star me-2"></i>
+                Offres sauvegardées
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      {% include 'accounts/widgets/profil_widget.html' %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<style>
+  .border-left-primary {
+    border-left: 4px solid var(--secondary-color) !important;
+  }
+  .border-left-warning {
+    border-left: 4px solid var(--warning-color) !important;
+  }
+  .border-left-success {
+    border-left: 4px solid var(--success-color) !important;
+  }
+  .border-left-info {
+    border-left: 4px solid #17a2b8 !important;
+  }
+</style>
+{% endblock %}
