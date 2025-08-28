@@ -1,0 +1,30 @@
+# === CORE DJANGO ===
+Django==5.2.5
+asgiref==3.8.1
+sqlparse==0.5.3
+
+# === AUTHENTICATION & SECURITY ===
+django-cors-headers==4.4.0
+pillow>=9.0.0
+
+# === DÉVELOPPEMENT ===
+django-debug-toolbar==4.2.0
+django-extensions==3.2.3
+
+# === FORMULAIRES ET VALIDATION ===
+django-crispy-forms==2.1
+crispy-bootstrap5==0.7
+
+# === OUTILS ===
+python-decouple==3.8
+requests==2.31.0
+
+# === TESTS ===
+pytest==7.4.3
+pytest-django==4.7.0
+coverage==7.3.2
+
+# === UTILITAIRES ===
+python-slugify==8.0.1
+python-dateutil==2.8.2
+pytz==2023.3
