@@ -1,0 +1,223 @@
+{% extends 'base.html' %} {% block title %}Accueil - {{ block.super }}{%
+endblock %} {% block content %}
+<div class="container mt-5">
+  {% if user.is_authenticated %}
+  <!-- Utilisateur connecté - Redirection vers le dashboard -->
+  <script>
+    window.location.href = "{% url 'accounts:dashboard' %}";
+  </script>
+  <div class="text-center">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Redirection...</span>
+    </div>
+    <p class="mt-3">Redirection vers votre tableau de bord...</p>
+  </div>
+  {% else %}
+  <!-- Page d'accueil pour les visiteurs -->
+  <div class="row align-items-center min-vh-75">
+    <div class="col-lg-6">
+      <div class="hero-content">
+        <h1 class="display-4 fw-bold text-primary mb-4">
+          <i class="fas fa-briefcase me-3"></i>
+          Analyse CV
+        </h1>
+        <p class="lead text-muted mb-4">
+          La plateforme moderne de gestion des candidatures et d'analyse de CV.
+          Connectez recruteurs et candidats de manière efficace et intelligente.
+        </p>
+        <div class="d-flex gap-3 flex-wrap">
+          <a
+            href="{% url 'accounts:register' %}"
+            class="btn btn-primary btn-lg"
+          >
+            <i class="fas fa-user-plus me-2"></i>
+            Créer un compte
+          </a>
+          <a
+            href="{% url 'accounts:login' %}"
+            class="btn btn-outline-primary btn-lg"
+          >
+            <i class="fas fa-sign-in-alt me-2"></i>
+            Se connecter
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="text-center">
+        <div class="hero-illustration">
+          <i class="fas fa-users fa-10x text-primary opacity-75"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fonctionnalités principales -->
+  <div class="row mt-5 pt-5">
+    <div class="col-12">
+      <h2 class="text-center mb-5">
+        <i class="fas fa-star me-2"></i>
+        Fonctionnalités principales
+      </h2>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card h-100 border-0 shadow-sm">
+        <div class="card-body text-center p-4">
+          <div class="feature-icon mb-3">
+            <i class="fas fa-user-graduate fa-3x text-success"></i>
+          </div>
+          <h5 class="card-title">Pour les candidats</h5>
+          <p class="card-text text-muted">
+            Créez votre profil, téléchargez vos CV et postulez facilement aux
+            offres d'emploi qui vous intéressent.
+          </p>
+          <ul class="list-unstyled text-start small">
+            <li>
+              <i class="fas fa-check text-success me-2"></i>Gestion de profil
+              personnalisé
+            </li>
+            <li>
+              <i class="fas fa-check text-success me-2"></i>Téléchargement de CV
+            </li>
+            <li>
+              <i class="fas fa-check text-success me-2"></i>Suivi des
+              candidatures
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card h-100 border-0 shadow-sm">
+        <div class="card-body text-center p-4">
+          <div class="feature-icon mb-3">
+            <i class="fas fa-user-tie fa-3x text-warning"></i>
+          </div>
+          <h5 class="card-title">Pour les recruteurs</h5>
+          <p class="card-text text-muted">
+            Publiez vos offres d'emploi, gérez les candidatures reçues et
+            trouvez les meilleurs talents.
+          </p>
+          <ul class="list-unstyled text-start small">
+            <li>
+              <i class="fas fa-check text-success me-2"></i>Publication d'offres
+              d'emploi
+            </li>
+            <li>
+              <i class="fas fa-check text-success me-2"></i>Gestion des
+              candidatures
+            </li>
+            <li>
+              <i class="fas fa-check text-success me-2"></i>Analyse des profils
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card h-100 border-0 shadow-sm">
+        <div class="card-body text-center p-4">
+          <div class="feature-icon mb-3">
+            <i class="fas fa-user-shield fa-3x text-danger"></i>
+          </div>
+          <h5 class="card-title">Administration</h5>
+          <p class="card-text text-muted">
+            Interface d'administration complète pour gérer les utilisateurs et
+            superviser la plateforme.
+          </p>
+          <ul class="list-unstyled text-start small">
+            <li>
+              <i class="fas fa-check text-success me-2"></i>Gestion des
+              utilisateurs
+            </li>
+            <li>
+              <i class="fas fa-check text-success me-2"></i>Statistiques de la
+              plateforme
+            </li>
+            <li>
+              <i class="fas fa-check text-success me-2"></i>Configuration
+              système
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Call to action -->
+  <div class="row mt-5 pt-5">
+    <div class="col-12">
+      <div class="card bg-primary text-white">
+        <div class="card-body text-center p-5">
+          <h3 class="mb-3">Prêt à commencer ?</h3>
+          <p class="lead mb-4">
+            Rejoignez notre plateforme dès aujourd'hui et découvrez une nouvelle
+            façon de gérer les candidatures.
+          </p>
+          <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a
+              href="{% url 'accounts:register' %}?role=candidat"
+              class="btn btn-light btn-lg"
+            >
+              <i class="fas fa-user-graduate me-2"></i>
+              Je suis candidat
+            </a>
+            <a
+              href="{% url 'accounts:register' %}?role=recruteur"
+              class="btn btn-outline-light btn-lg"
+            >
+              <i class="fas fa-user-tie me-2"></i>
+              Je suis recruteur
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<style>
+  .min-vh-75 {
+    min-height: 75vh;
+  }
+
+  .hero-illustration {
+    position: relative;
+  }
+
+  .hero-illustration::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    background: linear-gradient(
+      135deg,
+      var(--secondary-color),
+      var(--primary-color)
+    );
+    border-radius: 50%;
+    opacity: 0.1;
+    z-index: -1;
+  }
+
+  .feature-icon {
+    transition: transform 0.3s ease;
+  }
+
+  .card:hover .feature-icon {
+    transform: scale(1.1);
+  }
+
+  .card {
+    transition: all 0.3s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+  }
+</style>
+{% endblock %}
