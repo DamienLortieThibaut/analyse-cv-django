@@ -1,4 +1,4 @@
-{% extends 'index.html' %}
+{% extends 'dashboard/index.html' %}
 
 {% block title %}GRH Smart · {{ candidature.nom }}{% endblock %}
 
@@ -76,14 +76,6 @@
           ← Retour à la liste
         </a>
         
-        <div class="flex gap-3 flex-1 sm:flex-none">
-          <a href="{% url 'candidatures:edit' candidature.pk %}" class="px-6 py-3 rounded-xl bg-violet-600 hover:bg-violet-700 transition text-white">
-            Éditer
-          </a>
-          <a href="{% url 'candidatures:delete' candidature.pk %}" class="px-6 py-3 rounded-xl bg-rose-600 hover:bg-rose-700 transition text-white">
-            Supprimer
-          </a>
-        </div>
       </div>
     </section>
 

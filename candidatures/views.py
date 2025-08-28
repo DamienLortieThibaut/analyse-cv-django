@@ -116,7 +116,7 @@ class CandidatureFictive:
 
 def index(request):
     """Page d'accueil de l'app candidatures"""
-    return render(request, 'index.html')
+    return render(request, 'candidatures/index.html')
 
 def list_candidatures(request):
     """Liste des candidatures avec filtres"""
@@ -150,7 +150,7 @@ def list_candidatures(request):
     context = {
         'candidatures': candidatures,
     }
-    return render(request, 'list.html', context)
+    return render(request, 'candidatures/list.html', context)
 
 def detail_candidature(request, pk):
     """Détail d'une candidature"""
@@ -165,7 +165,7 @@ def detail_candidature(request, pk):
     context = {
         'candidature': candidature,
     }
-    return render(request, 'detail.html', context)
+    return render(request, 'candidatures/detail.html', context)
 
 def delete_candidature(request, pk):
     """Suppression d'une candidature"""
