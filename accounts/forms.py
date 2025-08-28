@@ -50,11 +50,11 @@ class CustomUserCreationForm(UserCreationForm):
     
     class Meta:
         model = CustomUser
-        fields = ('username', 'email', 'first_name', 'last_name', 'role', 'telephone', 'password1', 'password2')
+        fields = ('email', 'first_name', 'last_name', 'role', 'telephone', 'password1', 'password2')
         widgets = {
-            'username': forms.TextInput(attrs={
+            'email': forms.EmailInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Nom d\'utilisateur'
+                'placeholder': 'Votre adresse email'
             }),
         }
     
@@ -78,6 +78,7 @@ class CustomUserCreationForm(UserCreationForm):
     
     def save(self, commit=True):
         user = super().save(commit=False)
+        user.username = self.cleaned_data['email']  # Utiliser l'email comme username
         user.email = self.cleaned_data['email']
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
@@ -89,7 +90,7 @@ class CustomUserCreationForm(UserCreationForm):
             
             # Créer le profil correspondant selon le rôle
             if user.role == 'recruteur':
-                ProfilRecruteur.objects.create(user=user, entreprise="", poste="")
+                ProfilRecruteur.objects.create(user=user)
             elif user.role == 'candidat':
                 ProfilCandidat.objects.create(user=user)
         
