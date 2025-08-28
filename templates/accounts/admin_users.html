@@ -1,222 +1,138 @@
-{% extends 'base.html' %} {% block title %}Gestion des utilisateurs - {{
-block.super }}{% endblock %} {% block content %}
-<div class="container mt-4">
-  <div class="row">
-    <div class="col-12">
-      <div class="card">
-        <div
-          class="card-header d-flex justify-content-between align-items-center"
-        >
-          <h5 class="mb-0">
-            <i class="fas fa-users me-2"></i>
-            Gestion des utilisateurs
-          </h5>
-          <a href="{% url 'accounts:register' %}" class="btn btn-primary">
-            <i class="fas fa-user-plus me-2"></i>
-            Ajouter un utilisateur
-          </a>
-        </div>
-        <div class="card-body">
-          {% if users %}
-          <div class="table-responsive">
-            <table class="table table-hover">
-              <thead class="table-light">
-                <tr>
-                  <th>Utilisateur</th>
-                  <th>Email</th>
-                  <th>Rôle</th>
-                  <th>Statut</th>
-                  <th>Date d'inscription</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for user_item in users %}
-                <tr>
-                  <td>
-                    <div class="d-flex align-items-center">
-                      <div
-                        class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3"
-                        style="width: 40px; height: 40px"
-                      >
-                        {{ user_item.first_name.0|default:"U" }}{{
-                        user_item.last_name.0|default:"" }}
-                      </div>
-                      <div>
-                        <div class="fw-bold">
-                          {{ user_item.get_full_name|default:user_item.email }}
-                        </div>
-                        {% if user_item.telephone %}
-                        <small class="text-muted"
-                          >{{ user_item.telephone }}</small
-                        >
-                        {% endif %}
-                      </div>
-                    </div>
-                  </td>
-                  <td>{{ user_item.email }}</td>
-                  <td>
-                    <span class="role-badge role-{{ user_item.role }}">
-                      {{ user_item.get_role_display }}
-                    </span>
-                  </td>
-                  <td>
-                    {% if user_item.is_active %}
-                    <span class="badge bg-success">
-                      <i class="fas fa-check me-1"></i>
-                      Actif
-                    </span>
-                    {% else %}
-                    <span class="badge bg-danger">
-                      <i class="fas fa-times me-1"></i>
-                      Inactif
-                    </span>
-                    {% endif %} {% if user_item.is_staff %}
-                    <span class="badge bg-warning ms-1">
-                      <i class="fas fa-user-shield me-1"></i>
-                      Staff
-                    </span>
-                    {% endif %}
-                  </td>
-                  <td>
-                    <span
-                      data-bs-toggle="tooltip"
-                      title="{{ user_item.date_joined|date:'d/m/Y H:i' }}"
-                    >
-                      {{ user_item.date_joined|date:"d/m/Y" }}
-                    </span>
-                    <br />
-                    <small class="text-muted"
-                      >{{ user_item.date_joined|timesince }} ago</small
-                    >
-                  </td>
-                  <td>
-                    <div class="btn-group btn-group-sm" role="group">
-                      <a
-                        href="#"
-                        class="btn btn-outline-primary"
-                        data-bs-toggle="tooltip"
-                        title="Voir le profil"
-                      >
-                        <i class="fas fa-eye"></i>
-                      </a>
-                      {% if user_item != user %}
-                      <a
-                        href="#"
-                        class="btn btn-outline-warning"
-                        data-bs-toggle="tooltip"
-                        title="Modifier"
-                      >
-                        <i class="fas fa-edit"></i>
-                      </a>
-                      {% if user_item.is_active %}
-                      <button
-                        type="button"
-                        class="btn btn-outline-danger toggle-status"
-                        data-bs-toggle="tooltip"
-                        title="Désactiver"
-                        data-user-id="{{ user_item.id }}"
-                        data-action="deactivate"
-                      >
-                        <i class="fas fa-user-times"></i>
-                      </button>
-                      {% else %}
-                      <button
-                        type="button"
-                        class="btn btn-outline-success toggle-status"
-                        data-bs-toggle="tooltip"
-                        title="Activer"
-                        data-user-id="{{ user_item.id }}"
-                        data-action="activate"
-                      >
-                        <i class="fas fa-user-check"></i>
-                      </button>
-                      {% endif %} {% endif %}
-                    </div>
-                  </td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-          {% else %}
-          <div class="text-center py-5">
-            <i class="fas fa-users fa-3x text-muted mb-3"></i>
-            <p class="text-muted">Aucun utilisateur trouvé.</p>
-          </div>
-          {% endif %}
-        </div>
-      </div>
+{% extends 'dashboard/index.html' %}
+{% block title %}Gestion des utilisateurs - {{ block.super }}{% endblock %}
+{% block content %}
+<div class="container mx-auto space-y-6">
+  <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-lg">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-xl font-semibold text-slate-100 flex items-center gap-2">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+        </svg>
+        Gestion des utilisateurs
+      </h1>
+      <a href="{% url 'accounts:register' %}" class="px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 transition text-white">
+        <svg class="w-4 h-4 inline mr-2" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+        </svg>
+        Ajouter un utilisateur
+      </a>
     </div>
+
+    {% if users %}
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead>
+          <tr class="border-b border-slate-800">
+            <th class="text-left py-3 px-4 text-slate-300 font-medium">Utilisateur</th>
+            <th class="text-left py-3 px-4 text-slate-300 font-medium">Email</th>
+            <th class="text-left py-3 px-4 text-slate-300 font-medium">Rôle</th>
+            <th class="text-left py-3 px-4 text-slate-300 font-medium">Statut</th>
+            <th class="text-left py-3 px-4 text-slate-300 font-medium">Date d'inscription</th>
+            <th class="text-left py-3 px-4 text-slate-300 font-medium">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user_item in users %}
+          <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition">
+            <td class="py-4 px-4">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-400 to-violet-300 grid place-items-center text-slate-900 font-semibold">
+                  {{ user_item.first_name.0|default:"U" }}{{ user_item.last_name.0|default:"" }}
+                </div>
+                <div>
+                  <div class="font-medium text-slate-200">
+                    {{ user_item.get_full_name|default:user_item.email }}
+                  </div>
+                  {% if user_item.telephone %}
+                  <div class="text-sm text-slate-400">{{ user_item.telephone }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </td>
+            <td class="py-4 px-4 text-slate-300">{{ user_item.email }}</td>
+            <td class="py-4 px-4">
+              {% if user_item.role == 'admin' %}
+                <span class="inline-flex items-center rounded-full px-3 py-1 text-xs bg-rose-950 text-rose-300">Administrateur</span>
+              {% elif user_item.role == 'recruteur' %}
+                <span class="inline-flex items-center rounded-full px-3 py-1 text-xs bg-amber-950 text-amber-300">Recruteur</span>
+              {% elif user_item.role == 'candidat' %}
+                <span class="inline-flex items-center rounded-full px-3 py-1 text-xs bg-emerald-950 text-emerald-300">Candidat</span>
+              {% endif %}
+            </td>
+            <td class="py-4 px-4">
+              {% if user_item.is_active %}
+                <span class="inline-flex items-center rounded-full px-3 py-1 text-xs bg-emerald-950 text-emerald-300">Actif</span>
+              {% else %}
+                <span class="inline-flex items-center rounded-full px-3 py-1 text-xs bg-rose-950 text-rose-300">Inactif</span>
+              {% endif %}
+            </td>
+            <td class="py-4 px-4">
+              <div class="text-slate-300">{{ user_item.date_joined|date:"d/m/Y" }}</div>
+              <div class="text-xs text-slate-400">{{ user_item.date_joined|timesince }} ago</div>
+            </td>
+            <td class="py-4 px-4">
+              <div class="flex items-center gap-1">
+                <button class="p-2 rounded-lg hover:bg-slate-800 transition text-slate-400" title="Voir le profil">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5z"/>
+                  </svg>
+                </button>
+                {% if user_item != user %}
+                <button class="p-2 rounded-lg hover:bg-slate-800 transition text-slate-400" title="Modifier">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/>
+                  </svg>
+                </button>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="text-center py-12">
+      <div class="w-16 h-16 mx-auto rounded-full bg-slate-800 grid place-items-center mb-4">
+        <svg class="w-8 h-8 text-slate-400" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+        </svg>
+      </div>
+      <h3 class="text-lg font-semibold text-slate-300 mb-2">Aucun utilisateur trouvé</h3>
+    </div>
+    {% endif %}
   </div>
 
   <!-- Statistiques -->
-  <div class="row mt-4">
-    <div class="col-md-3">
-      <div class="card text-center">
-        <div class="card-body">
-          <i class="fas fa-users fa-2x text-primary mb-2"></i>
-          <h4>{{ stats.total_users }}</h4>
-          <p class="text-muted mb-0">Total utilisateurs</p>
-        </div>
-      </div>
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 text-center shadow-lg">
+      <svg class="w-8 h-8 text-violet-400 mx-auto mb-2" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+      </svg>
+      <div class="text-2xl font-bold text-slate-100">{{ stats.total_users }}</div>
+      <div class="text-slate-400 text-sm">Total utilisateurs</div>
     </div>
-    <div class="col-md-3">
-      <div class="card text-center">
-        <div class="card-body">
-          <i class="fas fa-user-shield fa-2x text-danger mb-2"></i>
-          <h4>{{ stats.admins }}</h4>
-          <p class="text-muted mb-0">Administrateurs</p>
-        </div>
-      </div>
+    <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 text-center shadow-lg">
+      <svg class="w-8 h-8 text-rose-400 mx-auto mb-2" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+      </svg>
+      <div class="text-2xl font-bold text-slate-100">{{ stats.admins }}</div>
+      <div class="text-slate-400 text-sm">Administrateurs</div>
     </div>
-    <div class="col-md-3">
-      <div class="card text-center">
-        <div class="card-body">
-          <i class="fas fa-user-tie fa-2x text-warning mb-2"></i>
-          <h4>{{ stats.recruteurs }}</h4>
-          <p class="text-muted mb-0">Recruteurs</p>
-        </div>
-      </div>
+    <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 text-center shadow-lg">
+      <svg class="w-8 h-8 text-amber-400 mx-auto mb-2" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M20.618 5.984A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+      </svg>
+      <div class="text-2xl font-bold text-slate-100">{{ stats.recruteurs }}</div>
+      <div class="text-slate-400 text-sm">Recruteurs</div>
     </div>
-    <div class="col-md-3">
-      <div class="card text-center">
-        <div class="card-body">
-          <i class="fas fa-user-graduate fa-2x text-success mb-2"></i>
-          <h4>{{ stats.candidats }}</h4>
-          <p class="text-muted mb-0">Candidats</p>
-        </div>
-      </div>
+    <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 text-center shadow-lg">
+      <svg class="w-8 h-8 text-emerald-400 mx-auto mb-2" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 14l9-5-9-5-9 5 9 5z"/>
+      </svg>
+      <div class="text-2xl font-bold text-slate-100">{{ stats.candidats }}</div>
+      <div class="text-slate-400 text-sm">Candidats</div>
     </div>
   </div>
 </div>
-{% endblock %} {% block extra_js %}
-<script>
-  // Initialiser les tooltips
-  document.addEventListener("DOMContentLoaded", function () {
-    var tooltipTriggerList = [].slice.call(
-      document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    );
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-      return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-  });
-
-  // Fonction pour changer le statut d'un utilisateur
-  document.addEventListener("click", function (e) {
-    if (e.target.closest(".toggle-status")) {
-      const button = e.target.closest(".toggle-status");
-      const userId = button.dataset.userId;
-      const action = button.dataset.action;
-      const actionText = action === "activate" ? "activer" : "désactiver";
-
-      if (confirm(`Êtes-vous sûr de vouloir ${actionText} cet utilisateur ?`)) {
-        // Ici on pourrait faire un appel AJAX pour changer le statut
-        console.log(`${actionText} utilisateur ${userId}`);
-        // Pour l'instant, on recharge juste la page
-        location.reload();
-      }
-    }
-  });
-</script>
 {% endblock %}
