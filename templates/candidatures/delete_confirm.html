@@ -1,0 +1,84 @@
+{% extends 'dashboard/index.html' %}
+
+{% block title %}GRH Smart · Supprimer {{ candidature.nom }}{% endblock %}
+
+{% block header_title %}GRH Smart · Suppression candidature{% endblock %}
+
+{% block content %}
+<div class="container mx-auto max-w-lg space-y-6">
+
+    <!-- HEADER BREADCRUMB -->
+    <nav class="flex items-center gap-2 text-sm text-slate-400 mb-6">
+      <a href="{% url 'candidatures:list' %}" class="hover:text-slate-300 transition">Candidatures</a>
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+      </svg>
+      <a href="{% url 'candidatures:detail' candidature.pk %}" class="hover:text-slate-300 transition">{{ candidature.nom }}</a>
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+      </svg>
+      <span class="text-rose-300">Supprimer</span>
+    </nav>
+
+    <!-- CARTE DE CONFIRMATION -->
+    <section class="rounded-2xl border border-rose-800 bg-rose-950/20 p-6 shadow-lg">
+      <div class="text-center space-y-4">
+        <!-- Icône d'avertissement -->
+        <div class="w-16 h-16 mx-auto rounded-full bg-rose-950 grid place-items-center">
+          <svg class="w-8 h-8 text-rose-400" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+          </svg>
+        </div>
+        
+        <!-- Titre et message -->
+        <div class="space-y-2">
+          <h1 class="text-xl font-bold text-slate-100">Supprimer cette candidature ?</h1>
+          <p class="text-slate-300">
+            Vous êtes sur le point de supprimer définitivement la candidature de 
+            <span class="font-semibold text-rose-300">{{ candidature.nom }}</span>
+            pour le poste de <span class="font-semibold">{{ candidature.get_poste_display }}</span>.
+          </p>
+          <p class="text-sm text-rose-300 bg-rose-950/30 rounded-lg p-3 mt-4">
+            ⚠️ Cette action est irréversible. Toutes les données liées à cette candidature seront perdues.
+          </p>
+        </div>
+
+        <!-- Détails de la candidature -->
+        <div class="rounded-xl border border-slate-800 bg-slate-900/50 p-4 text-left">
+          <div class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <p class="text-slate-400">Candidat</p>
+              <p class="font-medium text-slate-200">{{ candidature.nom }}</p>
+            </div>
+            <div>
+              <p class="text-slate-400">Poste</p>
+              <p class="font-medium text-slate-200">{{ candidature.get_poste_display }}</p>
+            </div>
+            <div>
+              <p class="text-slate-400">Score</p>
+              <p class="font-medium text-slate-200">{{ candidature.score }}/100</p>
+            </div>
+            <div>
+              <p class="text-slate-400">Statut</p>
+              <p class="font-medium text-slate-200">{{ candidature.get_statut_display }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <form method="post" class="flex flex-col sm:flex-row items-center gap-3 pt-4">
+          {% csrf_token %}
+          
+          <a href="{% url 'candidatures:detail' candidature.pk %}" class="flex-1 sm:flex-none px-6 py-3 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 transition text-center">
+            ← Annuler
+          </a>
+          
+          <button type="submit" class="flex-1 sm:flex-none px-6 py-3 rounded-xl bg-rose-600 hover:bg-rose-700 transition text-white font-medium">
+            Confirmer la suppression
+          </button>
+        </form>
+      </div>
+    </section>
+
+</div>
+{% endblock %}
