@@ -13,6 +13,7 @@ urlpatterns = [
     # Dashboard et profil
     path('dashboard/', views.dashboard, name='dashboard'),
     path('profile/', views.profile_view, name='profile'),
+    path('change-password/', views.change_password_view, name='change_password'),
     
     # Administration (pour les admins)
     path('admin/users/', views.admin_users, name='admin_users'),

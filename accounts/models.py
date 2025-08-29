@@ -38,7 +38,7 @@ class CustomUser(AbstractUser):
     
     # Utilisation de l'email comme identifiant de connexion
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
+    REQUIRED_FIELDS = ['first_name', 'last_name']
     
     class Meta:
         verbose_name = "Utilisateur"
