@@ -1,26 +1,17 @@
 <section class="rounded-2xl border border-slate-800 bg-slate-900/60 backdrop-blur p-4 shadow-lg mb-8">
   <form method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
     <label class="flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-900 px-3 py-2">
-      <span class="text-slate-400 text-sm">Poste</span>
-      <select name="poste" class="bg-slate-800 text-slate-200 outline-none flex-1 text-sm rounded border-0">
-        <option value="" class="bg-slate-800 text-slate-200">Tous</option>
-        <option value="data_analyst" class="bg-slate-800 text-slate-200" {% if request.GET.poste == 'data_analyst' %}selected{% endif %}>Data Analyst</option>
-        <option value="dev_front" class="bg-slate-800 text-slate-200" {% if request.GET.poste == 'dev_front' %}selected{% endif %}>Développeur Front</option>
-        <option value="qa_engineer" class="bg-slate-800 text-slate-200" {% if request.GET.poste == 'qa_engineer' %}selected{% endif %}>QA Engineer</option>
-        <option value="product_manager" class="bg-slate-800 text-slate-200" {% if request.GET.poste == 'product_manager' %}selected{% endif %}>Product Manager</option>
-        <option value="ux_designer" class="bg-slate-800 text-slate-200" {% if request.GET.poste == 'ux_designer' %}selected{% endif %}>UX Designer</option>
-      </select>
-    </label>
-    
-    <label class="flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-900 px-3 py-2">
       <span class="text-slate-400 text-sm">Statut</span>
-      <select name="statut" class="bg-slate-800 text-slate-200 outline-none flex-1 text-sm rounded border-0">
-        <option value="" class="bg-slate-800 text-slate-200">Tous</option>
-        <option value="soumise" class="bg-slate-800 text-slate-200" {% if request.GET.statut == 'soumise' %}selected{% endif %}>Soumise</option>
-        <option value="en_revue" class="bg-slate-800 text-slate-200" {% if request.GET.statut == 'en_revue' %}selected{% endif %}>En revue</option>
-        <option value="preselection" class="bg-slate-800 text-slate-200" {% if request.GET.statut == 'preselection' %}selected{% endif %}>Présélection</option>
-        <option value="rejetee" class="bg-slate-800 text-slate-200" {% if request.GET.statut == 'rejetee' %}selected{% endif %}>Rejetée</option>
-        <option value="embauchee" class="bg-slate-800 text-slate-200" {% if request.GET.statut == 'embauchee' %}selected{% endif %}>Embauché(e)</option>
+      <select name="status" class="bg-slate-800 text-slate-200 outline-none flex-1 text-sm rounded border-0">
+        <option value="" class="bg-slate-800 text-slate-200">Tous les statuts</option>
+        <option value="submitted" class="bg-slate-800 text-slate-200" {% if request.GET.status == 'submitted' %}selected{% endif %}>Soumise</option>
+        <option value="screening" class="bg-slate-800 text-slate-200" {% if request.GET.status == 'screening' %}selected{% endif %}>En sélection</option>
+        <option value="manager_review" class="bg-slate-800 text-slate-200" {% if request.GET.status == 'manager_review' %}selected{% endif %}>Revue managériale</option>
+        <option value="tech_test" class="bg-slate-800 text-slate-200" {% if request.GET.status == 'tech_test' %}selected{% endif %}>Test technique</option>
+        <option value="interview_1" class="bg-slate-800 text-slate-200" {% if request.GET.status == 'interview_1' %}selected{% endif %}>Premier entretien</option>
+        <option value="offer" class="bg-slate-800 text-slate-200" {% if request.GET.status == 'offer' %}selected{% endif %}>Offre émise</option>
+        <option value="hired" class="bg-slate-800 text-slate-200" {% if request.GET.status == 'hired' %}selected{% endif %}>Embauché</option>
+        <option value="rejected" class="bg-slate-800 text-slate-200" {% if request.GET.status == 'rejected' %}selected{% endif %}>Rejeté</option>
       </select>
     </label>
     
@@ -29,10 +20,21 @@
       <input type="number" name="score_min" min="0" max="100" placeholder="0" value="{{ request.GET.score_min }}" 
              class="bg-slate-800 text-slate-200 outline-none flex-1 text-sm placeholder:text-slate-500 border-0 rounded">
     </label>
+
+    <label class="flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-900 px-3 py-2">
+      <span class="text-slate-400 text-sm">Expérience</span>
+      <select name="experience" class="bg-slate-800 text-slate-200 outline-none flex-1 text-sm rounded border-0">
+        <option value="" class="bg-slate-800 text-slate-200">Toute expérience</option>
+        <option value="0-2" class="bg-slate-800 text-slate-200" {% if request.GET.experience == '0-2' %}selected{% endif %}>0-2 ans</option>
+        <option value="3-5" class="bg-slate-800 text-slate-200" {% if request.GET.experience == '3-5' %}selected{% endif %}>3-5 ans</option>
+        <option value="6-10" class="bg-slate-800 text-slate-200" {% if request.GET.experience == '6-10' %}selected{% endif %}>6-10 ans</option>
+        <option value="10+" class="bg-slate-800 text-slate-200" {% if request.GET.experience == '10+' %}selected{% endif %}>10+ ans</option>
+      </select>
+    </label>
     
     <label class="flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-900 px-3 py-2">
       <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="currentColor"><path d="M10 4a6 6 0 104.472 10.027l4.25 4.251 1.415-1.415-4.25-4.25A6 6 0 0010 4z"/></svg>
-      <input type="text" name="search" placeholder="Rechercher par nom…" value="{{ request.GET.search }}"
+      <input type="text" name="search" placeholder="Rechercher par nom, email..." value="{{ request.GET.search }}"
              class="bg-slate-800 text-slate-200 outline-none flex-1 text-sm placeholder:text-slate-500 border-0 rounded">
     </label>
     

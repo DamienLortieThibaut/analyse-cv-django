@@ -1,11 +1,9 @@
 {% extends 'dashboard/index.html' %}
 
-{% block title %}GRH Smart · {{ candidature.nom }}{% endblock %}
-
-{% block header_title %}GRH Smart · Détail candidature{% endblock %}
+{% block title %}GRH Smart · {{ candidature.first_name }} {{ candidature.last_name }}{% endblock %}
 
 {% block content %}
-<div class="container mx-auto max-w-2xl space-y-6">
+<div class="container mx-auto max-w-4xl space-y-6">
 
     <!-- HEADER BREADCRUMB -->
     <nav class="flex items-center gap-2 text-sm text-slate-400 mb-6">
@@ -13,7 +11,7 @@
       <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
         <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
       </svg>
-      <span class="text-slate-300">{{ candidature.nom }}</span>
+      <span class="text-slate-300">{{ candidature.first_name }} {{ candidature.last_name }}</span>
     </nav>
 
     <!-- CARTE PRINCIPALE -->
@@ -26,49 +24,95 @@
             </svg>
           </div>
           <div>
-            <h1 class="text-2xl font-bold text-slate-100">{{ candidature.nom }}</h1>
-            <p class="text-slate-400">{{ candidature.get_poste_display }}</p>
+            <h1 class="text-2xl font-bold text-slate-100">{{ candidature.first_name }} {{ candidature.last_name }}</h1>
+            <p class="text-slate-400">{{ candidature.headline|default:"Candidat" }}</p>
+            {% if candidature.email %}
+              <p class="text-sm text-slate-500">{{ candidature.email }}</p>
+            {% endif %}
           </div>
         </div>
         
         <!-- Statut Badge -->
         <div class="text-right">
-          {% if candidature.statut == 'soumise' %}
-            <span class="inline-flex items-center rounded-full px-4 py-2 text-sm bg-sky-950 text-sky-300">Soumise</span>
-          {% elif candidature.statut == 'en_revue' %}
-            <span class="inline-flex items-center rounded-full px-4 py-2 text-sm bg-amber-950 text-amber-300">En revue</span>
-          {% elif candidature.statut == 'preselection' %}
-            <span class="inline-flex items-center rounded-full px-4 py-2 text-sm bg-emerald-950 text-emerald-300">Présélection</span>
-          {% elif candidature.statut == 'rejetee' %}
-            <span class="inline-flex items-center rounded-full px-4 py-2 text-sm bg-rose-950 text-rose-300">Rejetée</span>
-          {% elif candidature.statut == 'embauchee' %}
-            <span class="inline-flex items-center rounded-full px-4 py-2 text-sm bg-cyan-950 text-cyan-300">Embauché(e)</span>
-          {% endif %}
+          {% include 'candidatures/widgets/status_badge.html' with statut=candidature.status %}
         </div>
       </div>
 
-      <!-- INFORMATIONS DÉTAILLÉES -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <!-- INFORMATIONS CLÉS -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div class="rounded-xl border border-slate-800 bg-slate-900 p-4">
-          <p class="text-xs text-slate-400 mb-1">Score d'évaluation</p>
-          <p class="text-3xl font-bold {% if candidature.score >= 80 %}text-emerald-400{% elif candidature.score >= 60 %}text-amber-400{% else %}text-rose-400{% endif %}">
-            {{ candidature.score }}
+          <p class="text-xs text-slate-400 mb-1">Score global</p>
+          <p class="text-3xl font-bold {% if candidature.fit_score_overall >= 80 %}text-emerald-400{% elif candidature.fit_score_overall >= 60 %}text-amber-400{% else %}text-rose-400{% endif %}">
+            {{ candidature.fit_score_overall|default:0|floatformat:0 }}
             <span class="text-base text-slate-400 font-normal">/100</span>
           </p>
         </div>
         
         <div class="rounded-xl border border-slate-800 bg-slate-900 p-4">
-          <p class="text-xs text-slate-400 mb-1">Date de candidature</p>
-          <p class="text-lg font-semibold text-slate-200">{{ candidature.date_creation|date:"d M Y" }}</p>
-          <p class="text-xs text-slate-400">{{ candidature.date_creation|date:"H:i" }}</p>
+          <p class="text-xs text-slate-400 mb-1">Expérience</p>
+          <p class="text-lg font-semibold text-slate-200">{{ candidature.years_experience|default:0|floatformat:1 }} ans</p>
         </div>
         
         <div class="rounded-xl border border-slate-800 bg-slate-900 p-4">
-          <p class="text-xs text-slate-400 mb-1">Dernière modification</p>
-          <p class="text-lg font-semibold text-slate-200">{{ candidature.date_modification|date:"d M Y" }}</p>
-          <p class="text-xs text-slate-400">{{ candidature.date_modification|date:"H:i" }}</p>
+          <p class="text-xs text-slate-400 mb-1">Date candidature</p>
+          <p class="text-lg font-semibold text-slate-200">{{ candidature.created_at|date:"d M Y" }}</p>
+          <p class="text-xs text-slate-400">{{ candidature.created_at|date:"H:i" }}</p>
+        </div>
+        
+        <div class="rounded-xl border border-slate-800 bg-slate-900 p-4">
+          <p class="text-xs text-slate-400 mb-1">Dernière MAJ</p>
+          <p class="text-lg font-semibold text-slate-200">{{ candidature.updated_at|date:"d M Y" }}</p>
+          <p class="text-xs text-slate-400">{{ candidature.updated_at|date:"H:i" }}</p>
         </div>
       </div>
+
+      <!-- DÉTAILS DU PROFIL -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- Compétences -->
+        {% if candidature.skills_primary %}
+        <div class="rounded-xl border border-slate-800 bg-slate-900 p-4">
+          <h3 class="text-sm font-semibold text-slate-200 mb-3">Compétences principales</h3>
+          <div class="flex flex-wrap gap-2">
+            {% for skill in candidature.skills_primary %}
+              <span class="px-3 py-1 text-sm rounded-lg bg-violet-950/50 text-violet-300 border border-violet-800">{{ skill }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Formation -->
+        {% if candidature.education_highest %}
+        <div class="rounded-xl border border-slate-800 bg-slate-900 p-4">
+          <h3 class="text-sm font-semibold text-slate-200 mb-3">Formation</h3>
+          <p class="text-slate-300">{{ candidature.education_highest }}</p>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- RÉSUMÉ DU CV -->
+      {% if candidature.summary %}
+      <div class="rounded-xl border border-slate-800 bg-slate-900 p-4 mb-6">
+        <h3 class="text-sm font-semibold text-slate-200 mb-3">Résumé du profil</h3>
+        <p class="text-slate-300 leading-relaxed">{{ candidature.summary|linebreaks }}</p>
+      </div>
+      {% endif %}
+
+      <!-- SCORES DÉTAILLÉS -->
+      {% if candidature.fit_scores %}
+      <div class="rounded-xl border border-slate-800 bg-slate-900 p-4 mb-6">
+        <h3 class="text-sm font-semibold text-slate-200 mb-3">Évaluation détaillée</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {% for criterium, score in candidature.fit_scores.items %}
+          <div class="flex justify-between items-center">
+            <span class="text-slate-400 capitalize">{{ criterium }}</span>
+            <span class="font-semibold {% if score >= 80 %}text-emerald-400{% elif score >= 60 %}text-amber-400{% else %}text-rose-400{% endif %}">
+              {{ score|floatformat:0 }}/100
+            </span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
 
       <!-- ACTIONS -->
       <div class="flex flex-col sm:flex-row items-center gap-3 pt-6 border-t border-slate-800">
@@ -76,6 +120,11 @@
           ← Retour à la liste
         </a>
         
+        {% if candidature.resume %}
+          <a href="{{ candidature.resume }}" target="_blank" class="flex-1 sm:flex-none px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 transition text-white text-center">
+            📄 Voir le CV
+          </a>
+        {% endif %}
       </div>
     </section>
 

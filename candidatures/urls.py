@@ -4,21 +4,25 @@ from .views import (
     CandidatureTestTextView,
     CandidatureAnalyzeView,
     CandidatureAnalyzeAPIView,
-    CandidatureSuccessView
+    CandidatureSuccessView,
+    CandidatureListView
 )
 
 app_name = 'candidatures'
 
 urlpatterns = [
-    path('new', CandidatureUploadView.as_view(), name='upload'),
+    path('', CandidatureUploadView.as_view(), name='index'),
+    path('new/', CandidatureUploadView.as_view(), name='upload'),
     path('upload/', CandidatureUploadView.as_view(), name='upload'),
     path('test-text/', CandidatureTestTextView.as_view(), name='test-text'),
     path('analyze/', CandidatureAnalyzeView.as_view(), name='analyze'),
     path('api/analyze/', CandidatureAnalyzeAPIView.as_view(), name='analyze-api'),
-    path('<uuid:candidature_id>/', CandidatureSuccessView.as_view(), name='success'),
+    path('list/', CandidatureListView.as_view(), name='list'),
 
-    path('', CandidatureUploadView.as_view(), name='index'),
-    path('list/', CandidatureUploadView.as_view(), name='list'),
-    path('<int:pk>/', CandidatureUploadView.as_view(), name='detail'),
-    path('<int:pk>/delete/', CandidatureUploadView.as_view(), name='delete'),
+    # Liste des candidatures filtré par id
+    path('list/id/<str:id>/', CandidatureListView.as_view(), name='list-id'),
+
+    path('<uuid:candidature_id>/', CandidatureSuccessView.as_view(), name='success'),
+    path('<uuid:pk>/', CandidatureSuccessView.as_view(), name='detail'),
+    path('<uuid:pk>/delete/', CandidatureUploadView.as_view(), name='delete'),
 ]

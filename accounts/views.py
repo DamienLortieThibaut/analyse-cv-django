@@ -16,6 +16,8 @@ from .forms import (
     ChangePasswordForm
 )
 from .models import CustomUser, ProfilRecruteur, ProfilCandidat
+# Ajouter l'import pour les candidatures
+from candidatures.models import Candidature
 
 
 def home(request):
@@ -150,10 +152,12 @@ def dashboard(request):
             ProfilRecruteur.objects.create(user=user, entreprise="", poste="")
             context['profil_recruteur'] = user.profil_recruteur
         
-        # Statistiques pour les recruteurs
+        # Statistiques réelles pour les recruteurs
         context['stats'] = {
-            'candidatures_total': 0,  # À implémenter plus tard
-            'candidatures_mois': 0,   # À implémenter plus tard
+            'candidatures_recues': Candidature.objects.count(),
+            'en_evaluation': Candidature.objects.filter(status='en_attente').count(),
+            'preselectionnes': Candidature.objects.filter(status='preselection').count(),
+            'entretiens_programmes': Candidature.objects.filter(status='entretien').count(),
         }
         
     elif user.is_candidat():
@@ -163,19 +167,20 @@ def dashboard(request):
             ProfilCandidat.objects.create(user=user)
             context['profil_candidat'] = user.profil_candidat
         
-        # Statistiques pour les candidats
-        context['stats'] = {
-            'candidatures_envoyees': 0,  # À implémenter plus tard
-            'reponses_recues': 0,         # À implémenter plus tard
-        }
+        # Statistiques réelles pour les candidats (utiliser l'email pour filtrer)
+        user_candidatures = Candidature.objects.filter(email=user.email)
+        context['candidatures_count'] = user_candidatures.count()
+        context['candidatures_en_attente'] = user_candidatures.filter(status='en_attente').count()
+        context['candidatures_preselection'] = user_candidatures.filter(status='preselection').count()
+        context['candidatures_entretien'] = user_candidatures.filter(status='entretien').count()
     
     elif user.is_admin():
         # Statistiques pour les admins
         context['stats'] = {
             'total_users': CustomUser.objects.count(),
-            'total_candidats': CustomUser.objects.filter(role='candidat').count(),
-            'total_recruteurs': CustomUser.objects.filter(role='recruteur').count(),
-            'users_actifs': CustomUser.objects.filter(est_actif=True).count(),
+            'candidats': CustomUser.objects.filter(role='candidat').count(),
+            'recruteurs': CustomUser.objects.filter(role='recruteur').count(),
+            'candidatures': Candidature.objects.count(),
         }
     
     return render(request, 'accounts/dashboard.html', context)
