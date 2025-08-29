@@ -1,109 +1,92 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm
-from django.contrib.auth.password_validation import validate_password
-from django.core.exceptions import ValidationError
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
 from .models import CustomUser, ProfilRecruteur, ProfilCandidat
 
 
 class CustomUserCreationForm(UserCreationForm):
-    """
-    Formulaire d'inscription personnalisé
-    """
+    """Formulaire d'inscription personnalisé"""
     email = forms.EmailField(
         required=True,
         widget=forms.EmailInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Votre adresse email'
+            'class': 'w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-900/60 focus:border-violet-500 focus:outline-none transition',
+            'placeholder': 'votre@email.com'
         })
     )
     first_name = forms.CharField(
         max_length=30,
         required=True,
+        label='Prénom',
         widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Votre prénom'
+            'class': 'w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-900/60 focus:border-violet-500 focus:outline-none transition',
+            'placeholder': 'Prénom'
         })
     )
     last_name = forms.CharField(
         max_length=30,
         required=True,
+        label='Nom',
         widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Votre nom'
+            'class': 'w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-900/60 focus:border-violet-500 focus:outline-none transition',
+            'placeholder': 'Nom'
         })
     )
     role = forms.ChoiceField(
-        choices=CustomUser.ROLE_CHOICES,
+        choices=[
+            ('candidat', 'Candidat'),
+            ('recruteur', 'Recruteur'),
+        ], 
         initial='candidat',
+        label='Rôle',
         widget=forms.Select(attrs={
-            'class': 'form-control'
+            'class': 'w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-900/60 focus:border-violet-500 focus:outline-none transition'
         })
     )
     telephone = forms.CharField(
         max_length=15,
         required=False,
+        label='Téléphone',
         widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': '+33123456789'
+            'class': 'w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-900/60 focus:border-violet-500 focus:outline-none transition',
+            'placeholder': '06 12 34 56 78'
         })
     )
     
     class Meta:
         model = CustomUser
-        fields = ('username', 'email', 'first_name', 'last_name', 'role', 'telephone', 'password1', 'password2')
-        widgets = {
-            'username': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Nom d\'utilisateur'
-            }),
-        }
+        fields = ('email', 'first_name', 'last_name', 'role', 'telephone', 'password1', 'password2')
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Personnaliser les widgets des mots de passe
         self.fields['password1'].widget.attrs.update({
-            'class': 'form-control',
+            'class': 'w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-900/60 focus:border-violet-500 focus:outline-none transition',
             'placeholder': 'Mot de passe'
         })
         self.fields['password2'].widget.attrs.update({
-            'class': 'form-control',
+            'class': 'w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-900/60 focus:border-violet-500 focus:outline-none transition',
             'placeholder': 'Confirmer le mot de passe'
         })
     
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if CustomUser.objects.filter(email=email).exists():
-            raise ValidationError("Un compte avec cette adresse email existe déjà.")
+            raise forms.ValidationError("Un utilisateur avec cet email existe déjà.")
         return email
     
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.email = self.cleaned_data['email']
-        user.first_name = self.cleaned_data['first_name']
-        user.last_name = self.cleaned_data['last_name']
-        user.role = self.cleaned_data['role']
-        user.telephone = self.cleaned_data.get('telephone', '')
-        
+        user.username = self.cleaned_data["email"]
+        user.email = self.cleaned_data["email"]
         if commit:
             user.save()
-            
-            # Créer le profil correspondant selon le rôle
-            if user.role == 'recruteur':
-                ProfilRecruteur.objects.create(user=user, entreprise="", poste="")
-            elif user.role == 'candidat':
-                ProfilCandidat.objects.create(user=user)
-        
         return user
 
 
 class CustomAuthenticationForm(AuthenticationForm):
-    """
-    Formulaire de connexion personnalisé qui utilise l'email
-    """
+    """Formulaire de connexion personnalisé qui utilise l'email"""
     username = forms.EmailField(
         label="Email",
         widget=forms.EmailInput(attrs={
-            'class': 'form-control',
+            'class': 'w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-900/60 focus:border-violet-500 focus:outline-none transition',
             'placeholder': 'Votre adresse email',
             'autofocus': True
         })
@@ -111,167 +94,147 @@ class CustomAuthenticationForm(AuthenticationForm):
     password = forms.CharField(
         label="Mot de passe",
         widget=forms.PasswordInput(attrs={
-            'class': 'form-control',
+            'class': 'w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-900/60 focus:border-violet-500 focus:outline-none transition',
             'placeholder': 'Votre mot de passe'
         })
     )
-    
-    def __init__(self, request=None, *args, **kwargs):
-        super().__init__(request, *args, **kwargs)
-        self.fields['username'].label = "Email"
-
-
-class ProfilRecruteurForm(forms.ModelForm):
-    """
-    Formulaire pour le profil recruteur
-    """
-    class Meta:
-        model = ProfilRecruteur
-        fields = ['entreprise', 'poste', 'secteur_activite', 'site_web']
-        widgets = {
-            'entreprise': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Nom de votre entreprise'
-            }),
-            'poste': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Votre poste'
-            }),
-            'secteur_activite': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Secteur d\'activité'
-            }),
-            'site_web': forms.URLInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'https://www.entreprise.com'
-            }),
-        }
-
-
-class ProfilCandidatForm(forms.ModelForm):
-    """
-    Formulaire pour le profil candidat
-    """
-    class Meta:
-        model = ProfilCandidat
-        fields = [
-            'date_naissance', 'adresse', 'ville', 'code_postal', 
-            'pays', 'linkedin', 'github', 'portfolio'
-        ]
-        widgets = {
-            'date_naissance': forms.DateInput(attrs={
-                'class': 'form-control',
-                'type': 'date'
-            }),
-            'adresse': forms.Textarea(attrs={
-                'class': 'form-control',
-                'rows': 3,
-                'placeholder': 'Votre adresse complète'
-            }),
-            'ville': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Votre ville'
-            }),
-            'code_postal': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Code postal'
-            }),
-            'pays': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Pays'
-            }),
-            'linkedin': forms.URLInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'https://linkedin.com/in/votre-profil'
-            }),
-            'github': forms.URLInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'https://github.com/votre-username'
-            }),
-            'portfolio': forms.URLInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'https://votre-portfolio.com'
-            }),
-        }
 
 
 class UserUpdateForm(forms.ModelForm):
-    """
-    Formulaire pour modifier les informations de base de l'utilisateur
-    """
+    """Formulaire de mise à jour du profil utilisateur"""
+    
     class Meta:
         model = CustomUser
         fields = ['first_name', 'last_name', 'email', 'telephone']
-        widgets = {
-            'first_name': forms.TextInput(attrs={
-                'class': 'form-control'
-            }),
-            'last_name': forms.TextInput(attrs={
-                'class': 'form-control'
-            }),
-            'email': forms.EmailInput(attrs={
-                'class': 'form-control'
-            }),
-            'telephone': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': '+33123456789'
-            }),
-        }
-    
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # Style pour tous les champs
+        for field_name, field in self.fields.items():
+            field.widget.attrs.update({
+                'class': 'w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-900/60 focus:border-violet-500 focus:outline-none transition'
+            })
+        
+        # Placeholders spécifiques
+        self.fields['first_name'].widget.attrs['placeholder'] = 'Prénom'
+        self.fields['last_name'].widget.attrs['placeholder'] = 'Nom'
+        self.fields['email'].widget.attrs['placeholder'] = 'Email'
+        self.fields['telephone'].widget.attrs['placeholder'] = 'Téléphone'
+        
+        # Labels français
+        self.fields['first_name'].label = 'Prénom'
+        self.fields['last_name'].label = 'Nom'
+        self.fields['email'].label = 'Email'
+        self.fields['telephone'].label = 'Téléphone'
+
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if CustomUser.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
-            raise ValidationError("Un autre compte utilise déjà cette adresse email.")
+            raise forms.ValidationError("Un utilisateur avec cet email existe déjà.")
         return email
 
 
-class ChangePasswordForm(forms.Form):
-    """
-    Formulaire pour changer le mot de passe
-    """
-    old_password = forms.CharField(
-        label="Ancien mot de passe",
-        widget=forms.PasswordInput(attrs={
-            'class': 'form-control'
-        })
-    )
-    new_password1 = forms.CharField(
-        label="Nouveau mot de passe",
-        widget=forms.PasswordInput(attrs={
-            'class': 'form-control'
-        }),
-        validators=[validate_password]
-    )
-    new_password2 = forms.CharField(
-        label="Confirmer le nouveau mot de passe",
-        widget=forms.PasswordInput(attrs={
-            'class': 'form-control'
-        })
-    )
+class ProfilRecruteurForm(forms.ModelForm):
+    """Formulaire pour le profil recruteur"""
     
-    def __init__(self, user, *args, **kwargs):
-        self.user = user
+    class Meta:
+        model = ProfilRecruteur
+        fields = ['entreprise', 'poste', 'secteur_activite', 'site_web']
+        
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-    
-    def clean_old_password(self):
-        old_password = self.cleaned_data.get('old_password')
-        if not self.user.check_password(old_password):
-            raise ValidationError("L'ancien mot de passe est incorrect.")
-        return old_password
-    
-    def clean(self):
-        cleaned_data = super().clean()
-        new_password1 = cleaned_data.get('new_password1')
-        new_password2 = cleaned_data.get('new_password2')
         
-        if new_password1 and new_password2:
-            if new_password1 != new_password2:
-                raise ValidationError("Les nouveaux mots de passe ne correspondent pas.")
+        # Style pour tous les champs
+        for field_name, field in self.fields.items():
+            if isinstance(field.widget, forms.Textarea):
+                field.widget.attrs.update({
+                    'class': 'w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-900/60 focus:border-violet-500 focus:outline-none transition',
+                    'rows': 4
+                })
+            else:
+                field.widget.attrs.update({
+                    'class': 'w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-900/60 focus:border-violet-500 focus:outline-none transition'
+                })
         
-        return cleaned_data
+        # Placeholders et labels
+        self.fields['entreprise'].widget.attrs['placeholder'] = 'Nom de l\'entreprise'
+        self.fields['poste'].widget.attrs['placeholder'] = 'Votre poste'
+        self.fields['secteur_activite'].widget.attrs['placeholder'] = 'Secteur d\'activité'
+        self.fields['site_web'].widget.attrs['placeholder'] = 'https://www.exemple.com'
+        
+        # Labels français
+        self.fields['entreprise'].label = 'Entreprise'
+        self.fields['poste'].label = 'Poste'
+        self.fields['secteur_activite'].label = 'Secteur d\'activité'
+        self.fields['site_web'].label = 'Site web'
+
+
+class ProfilCandidatForm(forms.ModelForm):
+    """Formulaire pour le profil candidat"""
     
-    def save(self):
-        password = self.cleaned_data['new_password1']
-        self.user.set_password(password)
-        self.user.save()
-        return self.user
+    class Meta:
+        model = ProfilCandidat
+        fields = ['date_naissance', 'adresse', 'ville', 'code_postal', 'pays', 
+                 'linkedin', 'github', 'portfolio']
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # Style pour tous les champs
+        for field_name, field in self.fields.items():
+            if isinstance(field.widget, forms.Textarea):
+                field.widget.attrs.update({
+                    'class': 'w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-900/60 focus:border-violet-500 focus:outline-none transition',
+                    'rows': 4
+                })
+            elif isinstance(field.widget, forms.DateInput):
+                field.widget.attrs.update({
+                    'class': 'w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-900/60 focus:border-violet-500 focus:outline-none transition',
+                    'type': 'date'
+                })
+            else:
+                field.widget.attrs.update({
+                    'class': 'w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-900/60 focus:border-violet-500 focus:outline-none transition'
+                })
+        
+        # Placeholders et labels
+        self.fields['adresse'].widget.attrs['placeholder'] = 'Votre adresse complète'
+        self.fields['ville'].widget.attrs['placeholder'] = 'Votre ville'
+        self.fields['code_postal'].widget.attrs['placeholder'] = 'Code postal'
+        self.fields['pays'].widget.attrs['placeholder'] = 'Pays'
+        self.fields['linkedin'].widget.attrs['placeholder'] = 'https://linkedin.com/in/votre-profil'
+        self.fields['github'].widget.attrs['placeholder'] = 'https://github.com/votre-username'
+        self.fields['portfolio'].widget.attrs['placeholder'] = 'https://votre-portfolio.com'
+        
+        # Labels français
+        self.fields['date_naissance'].label = 'Date de naissance'
+        self.fields['adresse'].label = 'Adresse'
+        self.fields['ville'].label = 'Ville'
+        self.fields['code_postal'].label = 'Code postal'
+        self.fields['pays'].label = 'Pays'
+        self.fields['linkedin'].label = 'Profil LinkedIn'
+        self.fields['github'].label = 'Profil GitHub'
+        self.fields['portfolio'].label = 'Portfolio'
+
+
+class ChangePasswordForm(PasswordChangeForm):
+    """Formulaire personnalisé pour changer le mot de passe"""
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # Style pour tous les champs
+        for field_name, field in self.fields.items():
+            field.widget.attrs.update({
+                'class': 'w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-900/60 focus:border-violet-500 focus:outline-none transition'
+            })
+        
+        # Placeholders et labels français
+        self.fields['old_password'].widget.attrs['placeholder'] = 'Mot de passe actuel'
+        self.fields['new_password1'].widget.attrs['placeholder'] = 'Nouveau mot de passe'
+        self.fields['new_password2'].widget.attrs['placeholder'] = 'Confirmer le nouveau mot de passe'
+        
+        self.fields['old_password'].label = 'Mot de passe actuel'
+        self.fields['new_password1'].label = 'Nouveau mot de passe'
+        self.fields['new_password2'].label = 'Confirmer le nouveau mot de passe'

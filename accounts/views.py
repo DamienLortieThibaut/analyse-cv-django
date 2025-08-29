@@ -2,12 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.urls import reverse_lazy
 from django.views.generic import CreateView
-from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic.edit import UpdateView
-from django.views.generic import TemplateView, ListView
+from django.views.generic import ListView
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from .forms import (
     CustomUserCreationForm, 
@@ -29,15 +27,29 @@ def home(request):
 
 class RegisterView(CreateView):
     """
-    Vue d'inscription
+    Vue d'inscription avec JWT
     """
     form_class = CustomUserCreationForm
     template_name = 'accounts/register.html'
-    success_url = reverse_lazy('accounts:login')
     
     def form_valid(self, form):
-        response = super().form_valid(form)
-        messages.success(self.request, 'Votre compte a été créé avec succès ! Vous pouvez maintenant vous connecter.')
+        # Sauvegarder l'utilisateur
+        user = form.save()
+        
+        # Générer les tokens JWT
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+        refresh_token = str(refresh)
+        
+        messages.success(self.request, f'Compte créé avec succès ! Bienvenue {user.first_name} !')
+        
+        # Rediriger vers le dashboard
+        response = redirect('accounts:dashboard')
+        
+        # Stocker les tokens JWT en cookies
+        response.set_cookie('access_token', access_token, max_age=3600, httponly=True, secure=False, samesite='Lax')
+        response.set_cookie('refresh_token', refresh_token, max_age=604800, httponly=True, secure=False, samesite='Lax')
+        
         return response
     
     def get_context_data(self, **kwargs):
@@ -63,15 +75,25 @@ def login_view(request):
             user = authenticate(request, username=email, password=password)
             
             if user is not None:
-                login(request, user)
+                # Générer les tokens JWT
+                refresh = RefreshToken.for_user(user)
+                access_token = str(refresh.access_token)
+                refresh_token = str(refresh)
+                
                 messages.success(request, f'Bienvenue, {user.first_name} !')
                 
-                # Rediriger selon le rôle
+                # Rediriger vers le dashboard
                 next_url = request.GET.get('next')
                 if next_url:
-                    return redirect(next_url)
+                    response = redirect(next_url)
                 else:
-                    return redirect('accounts:dashboard')
+                    response = redirect('accounts:dashboard')
+                
+                # Stocker les tokens JWT en cookies
+                response.set_cookie('access_token', access_token, max_age=3600, httponly=True, secure=False, samesite='Lax')
+                response.set_cookie('refresh_token', refresh_token, max_age=604800, httponly=True, secure=False, samesite='Lax')
+                
+                return response
             else:
                 messages.error(request, 'Email ou mot de passe incorrect.')
         else:
@@ -85,14 +107,28 @@ def login_view(request):
     })
 
 
-@login_required
 def logout_view(request):
     """
-    Vue de déconnexion
+    Vue de déconnexion JWT
     """
-    logout(request)
+    # Tenter de blacklister le refresh token s'il existe
+    try:
+        refresh_token = request.COOKIES.get('refresh_token')
+        if refresh_token:
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+    except Exception:
+        pass  # Token invalide ou déjà blacklisté
+    
+    # Créer la réponse de redirection
+    response = redirect('accounts:home')
+    
+    # Supprimer les cookies JWT
+    response.delete_cookie('access_token')
+    response.delete_cookie('refresh_token')
+    
     messages.success(request, 'Vous avez été déconnecté avec succès.')
-    return redirect('accounts:home')
+    return response
 
 
 @login_required
