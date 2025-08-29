@@ -4,162 +4,227 @@
 
 {% block candidature_content %}
 <div class="flex justify-center">
-    <div class="w-full max-w-6xl">
+    <div class="w-full max-w-4xl">
         {% if candidature %}
         <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-lg">
-                <div class="text-center mb-6">
-                    <svg class="w-16 h-16 text-emerald-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            <h2 class="text-center text-2xl font-bold text-slate-100 mb-4">
+                <svg class="w-8 h-8 inline mb-1 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Candidature enregistrée avec succès !
+            </h2>
+            
+            <!-- Section Profil & Score -->
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <h5 class="text-lg font-semibold text-slate-200 mb-2">Candidat identifié</h5>
+                    <p class="text-violet-300 text-xl font-bold mb-2">{{ candidature.first_name }} {{ candidature.last_name }}</p>
+                    <p class="text-slate-300 text-lg">{{ candidature.headline }}</p>
+                    {% if candidature.summary %}
+                    <p class="text-slate-400 text-sm mt-2">{{ candidature.summary }}</p>
+                    {% endif %}
+                    {% if candidature.email %}
+                    <p class="text-slate-400 text-sm mt-1">{{ candidature.email }}</p>
+                    {% endif %}
+                    {% if candidature.phone %}
+                    <p class="text-slate-400 text-sm">{{ candidature.phone }}</p>
+                    {% endif %}
+                    {% if candidature.position_applied %}
+                    <p class="text-slate-400 text-sm">Poste: {{ candidature.position_applied }}</p>
+                    {% endif %}
+                </div>
+                <div>
+                    <h5 class="text-lg font-semibold text-slate-200 mb-2">Score global</h5>
+                    {% if candidature.fit_score_overall %}
+                    <div class="flex items-center mb-4">
+                        <div class="flex-grow bg-slate-700 rounded-full h-6">
+                            <div class="bg-emerald-500 h-6 rounded-full flex items-center justify-center text-white text-sm font-medium" 
+                                 style="width: {{ candidature.fit_score_overall }}%">
+                                {{ candidature.fit_score_overall }}%
+                            </div>
+                        </div>
+                        <span class="ml-3 text-lg font-bold text-slate-100">{{ candidature.fit_score_overall }}/100</span>
+                    </div>
+                    
+                    <!-- Scores détaillés -->
+                    {% if candidature.fit_scores %}
+                    <div class="space-y-2">
+                        {% for key, value in candidature.fit_scores.items %}
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-slate-300 capitalize">{{ key|capfirst }}</span>
+                            <div class="flex items-center ml-2">
+                                <div class="w-16 bg-slate-700 rounded-full h-2 mr-2">
+                                    <div class="bg-violet-400 h-2 rounded-full" style="width: {{ value }}%"></div>
+                                </div>
+                                <span class="text-slate-100 text-xs w-8">{{ value|floatformat:0 }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Section Expérience -->
+            <div class="bg-slate-800/50 rounded-lg p-4 mb-6">
+                <h6 class="text-lg font-semibold text-slate-200 mb-3">Expérience professionnelle</h6>
+                <p class="text-emerald-300 text-lg font-medium mb-3">{{ candidature.years_experience }} années d'expérience professionnelle</p>
+                {% if candidature.experiences %}
+                <div class="space-y-3">
+                    {% for experience in candidature.experiences %}
+                    <div class="border-l-2 border-emerald-500 pl-4 py-2">
+                        <div class="flex justify-between items-start mb-1">
+                            <h8 class="font-medium text-slate-200">{{ experience.position }} • {{ experience.company }}</h8>
+                            <span class="text-slate-400 text-xs">{{ experience.duration }}</span>
+                        </div>
+                        {% if experience.description %}
+                        <p class="text-slate-300 text-sm">{{ experience.description }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Section Compétences -->
+            <div class="bg-slate-800/50 rounded-lg p-4 mb-6">
+                <h6 class="text-lg font-semibold text-slate-200 mb-3">Compétences</h6>
+                <div class="grid md:grid-cols-2 gap-4">
+                    {% if candidature.skills_primary %}
+                    <div>
+                        <h7 class="text-sm font-medium text-slate-300 mb-2">Compétences principales</h7>
+                        <div class="flex flex-wrap gap-2">
+                            {% for skill in candidature.skills_primary %}
+                            <span class="bg-violet-600 text-white px-3 py-1 rounded-full text-xs">{{ skill }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if candidature.skills_secondary %}
+                    <div>
+                        <h7 class="text-sm font-medium text-slate-300 mb-2">Compétences secondaires</h7>
+                        <div class="flex flex-wrap gap-2">
+                            {% for skill in candidature.skills_secondary %}
+                            <span class="bg-slate-600 text-slate-200 px-2 py-1 rounded-full text-xs">{{ skill }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Section Formation -->
+            <div class="bg-slate-800/50 rounded-lg p-4 mb-6">
+                <h6 class="text-lg font-semibold text-slate-200 mb-3">Formation</h6>
+                <p class="text-blue-300 text-lg font-medium mb-3">{{ candidature.education_highest }}</p>
+                {% if candidature.education %}
+                <div class="space-y-3">
+                    {% for edu in candidature.education %}
+                    <div class="border-l-2 border-blue-500 pl-4 py-2">
+                        <div class="flex justify-between items-start mb-1">
+                            <h8 class="font-medium text-slate-200">{{ edu.degree }} • {{ edu.school }}</h8>
+                            <span class="text-slate-400 text-xs">{{ edu.duration }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Section Informations personnelles -->
+            <div class="grid md:grid-cols-3 gap-4 mb-6">
+                <div class="bg-slate-800/50 rounded-lg p-4">
+                    <h7 class="text-sm font-medium text-slate-300 mb-2">Langues</h7>
+                    <div>
+                        {% if candidature.languages %}
+                        {% for lang in candidature.languages %}
+                        {% for code, level in lang.items %}
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-slate-300">{{ code|upper }}</span>
+                            <span class="text-slate-400">{{ level }}</span>
+                        </div>
+                        {% endfor %}
+                        {% endfor %}
+                        {% else %}
+                        <p class="text-slate-400 text-sm">Non spécifié</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="bg-slate-800/50 rounded-lg p-4">
+                    <h7 class="text-sm font-medium text-slate-300 mb-2">Localisation</h7>
+                    <div>
+                        {% if candidature.locations_preferred %}
+                        {% for location in candidature.locations_preferred %}
+                        <span class="bg-slate-700 text-slate-200 px-2 py-1 rounded text-xs block mb-1">{{ location }}</span>
+                        {% endfor %}
+                        {% else %}
+                        <p class="text-slate-400 text-sm">Non spécifié</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="bg-slate-800/50 rounded-lg p-4">
+                    <h7 class="text-sm font-medium text-slate-300 mb-2">Centres d'intérêt</h7>
+                    <div>
+                        {% if candidature.interests %}
+                        {% for interest in candidature.interests %}
+                        <span class="text-slate-300 text-sm block mb-1">{{ interest }}</span>
+                        {% endfor %}
+                        {% else %}
+                        <p class="text-slate-400 text-sm">Non spécifié</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section Disponibilité & Salaire -->
+            <div class="grid md:grid-cols-2 gap-4 mb-6">
+                <div class="bg-slate-800/50 rounded-lg p-4">
+                    <h7 class="text-sm font-medium text-slate-300 mb-2">Disponibilité</h7>
+                    <p class="text-slate-300">
+                        {% if candidature.availability_date %}
+                        Disponible le {{ candidature.availability_date|date:"d/m/Y" }}
+                        {% else %}
+                        Disponibilité à définir
+                        {% endif %}
+                    </p>
+                    <p class="text-slate-400 text-sm mt-1">Autorisation de travail: {{ candidature.get_work_authorization_display }}</p>
+                </div>
+                <div class="bg-slate-800/50 rounded-lg p-4">
+                    <h7 class="text-sm font-medium text-slate-300 mb-2">Prétentions salariales</h7>
+                    <p class="text-slate-300">
+                        {% if candidature.salary_expectation_min or candidature.salary_expectation_max %}
+                            {% if candidature.salary_expectation_min and candidature.salary_expectation_max %}
+                                {{ candidature.salary_expectation_min }}€ - {{ candidature.salary_expectation_max }}€
+                            {% elif candidature.salary_expectation_min %}
+                                À partir de {{ candidature.salary_expectation_min }}€
+                            {% elif candidature.salary_expectation_max %}
+                                Jusqu'à {{ candidature.salary_expectation_max }}€
+                            {% endif %}
+                        {% else %}
+                            Non spécifié
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Section Statut -->
+            <div class="bg-slate-800/50 rounded-lg p-4 mb-6">
+                <h6 class="text-lg font-semibold text-slate-200 mb-3">Statut de la candidature</h6>
+                <div class="flex flex-wrap gap-3 items-center">
+                    <span class="bg-violet-600 text-white px-3 py-1 rounded-full text-sm">{{ candidature.get_status_display }}</span>
+                    <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">Priorité: {{ candidature.get_priority_display }}</span>
+                    <span class="text-slate-400 text-sm">ID: {{ candidature.id }}</span>
+                </div>
+            </div>
+            
+            <div class="text-center mt-6">
+                <a href="{% url 'candidatures:upload' %}" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 shadow-lg inline-flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                     </svg>
-                    <h2 class="text-3xl font-bold text-slate-100">Candidature enregistrée avec succès !</h2>
-                </div>
-                
-                <div class="grid md:grid-cols-2 gap-6 mb-6">
-                    <div>
-                        <h4 class="text-xl font-semibold text-slate-200 mb-4">Informations personnelles</h4>
-                        <div class="space-y-3">
-                            <div class="flex justify-between py-2 border-b border-slate-700">
-                                <span class="font-medium text-slate-300">Nom:</span>
-                                <span class="text-slate-100">{{ candidature.first_name }} {{ candidature.last_name }}</span>
-                            </div>
-                            <div class="flex justify-between py-2 border-b border-slate-700">
-                                <span class="font-medium text-slate-300">Email:</span>
-                                <span class="text-slate-100">{{ candidature.email }}</span>
-                            </div>
-                            {% if candidature.phone %}
-                            <div class="flex justify-between py-2 border-b border-slate-700">
-                                <span class="font-medium text-slate-300">Téléphone:</span>
-                                <span class="text-slate-100">{{ candidature.phone }}</span>
-                            </div>
-                            {% endif %}
-                            {% if candidature.position_applied %}
-                            <div class="flex justify-between py-2 border-b border-slate-700">
-                                <span class="font-medium text-slate-300">Poste:</span>
-                                <span class="text-slate-100">{{ candidature.position_applied }}</span>
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <h4 class="text-xl font-semibold text-slate-200 mb-4">Analyse du profil</h4>
-                        <div class="mb-4">
-                            <span class="block font-medium text-slate-300 mb-1">Titre professionnel:</span>
-                            <p class="text-lg text-violet-300 font-medium">{{ candidature.headline }}</p>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <span class="block font-medium text-slate-300 mb-2">Score d'adéquation:</span>
-                            <div class="flex items-center">
-                                <div class="flex-grow bg-slate-700 rounded-full h-6">
-                                    <div class="bg-emerald-500 h-6 rounded-full flex items-center justify-center text-white text-sm font-medium" 
-                                         style="width: {{ candidature.fit_score_overall }}%">
-                                        {{ candidature.fit_score_overall }}%
-                                    </div>
-                                </div>
-                                <span class="ml-3 text-lg font-bold text-slate-100">{{ candidature.fit_score_overall }}/100</span>
-                            </div>
-                        </div>
-                        
-                        {% if candidature.fit_scores %}
-                        <div class="mb-4">
-                            <span class="block font-medium text-slate-300 mb-2">Détails du scoring:</span>
-                            <div class="grid grid-cols-2 gap-3">
-                                {% for key, value in candidature.fit_scores.items %}
-                                <div>
-                                    <span class="text-sm text-slate-400">{{ key|capfirst }}:</span>
-                                    <div class="bg-slate-700 rounded-full h-4 mt-1">
-                                        <div class="bg-violet-500 h-4 rounded-full flex items-center justify-center" style="width: {{ value }}%">
-                                            <span class="text-xs text-white font-medium">{{ value|floatformat:0 }}%</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                        {% endif %}
-                    </div>
-                </div>
-                
-                <div class="grid md:grid-cols-2 gap-6 mb-6">
-                    <div>
-                        <h5 class="text-lg font-semibold text-slate-200 mb-3">Compétences</h5>
-                        <div class="mb-4">
-                            <span class="block font-medium text-slate-300 mb-2">Principales:</span>
-                            <div class="space-y-1">
-                                {% for skill in candidature.skills_primary %}
-                                    <span class="bg-violet-600 text-white px-3 py-1 rounded-full text-sm mr-2 mb-2 inline-block">{{ skill }}</span>
-                                {% endfor %}
-                            </div>
-                        </div>
-                        {% if candidature.skills_secondary %}
-                        <div>
-                            <span class="block font-medium text-slate-300 mb-2">Secondaires:</span>
-                            <div class="space-y-1">
-                                {% for skill in candidature.skills_secondary %}
-                                    <span class="bg-slate-600 text-slate-200 px-3 py-1 rounded-full text-sm mr-2 mb-2 inline-block">{{ skill }}</span>
-                                {% endfor %}
-                            </div>
-                        </div>
-                        {% endif %}
-                    </div>
-                    
-                    <div>
-                        <h5 class="text-lg font-semibold text-slate-200 mb-3">Détails</h5>
-                        <div class="space-y-3">
-                            <div class="flex justify-between py-2 border-b border-slate-700">
-                                <span class="font-medium text-slate-300">Expérience:</span>
-                                <span class="text-slate-100">{{ candidature.years_experience }} ans</span>
-                            </div>
-                            <div class="flex justify-between py-2 border-b border-slate-700">
-                                <span class="font-medium text-slate-300">Formation:</span>
-                                <span class="text-slate-100">{{ candidature.education_highest }}</span>
-                            </div>
-                            {% if candidature.languages %}
-                            <div class="flex justify-between py-2 border-b border-slate-700">
-                                <span class="font-medium text-slate-300">Langues:</span>
-                                <div>
-                                    {% for lang in candidature.languages %}
-                                        {% for code, level in lang.items %}
-                                            <span class="bg-blue-600 text-white px-2 py-1 rounded text-xs mr-1">{{ code|upper }}: {{ level }}</span>
-                                        {% endfor %}
-                                    {% endfor %}
-                                </div>
-                            </div>
-                            {% endif %}
-                            {% if candidature.locations_preferred %}
-                            <div class="flex justify-between py-2 border-b border-slate-700">
-                                <span class="font-medium text-slate-300">Localisations:</span>
-                                <span class="text-slate-100">{{ candidature.locations_preferred|join:", " }}</span>
-                            </div>
-                            {% endif %}
-                            {% if candidature.availability_date %}
-                            <div class="flex justify-between py-2 border-b border-slate-700">
-                                <span class="font-medium text-slate-300">Disponibilité:</span>
-                                <span class="text-slate-100">{{ candidature.availability_date|date:"d/m/Y" }}</span>
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="mt-6 p-4 bg-slate-800/60 rounded-xl">
-                    <h5 class="text-lg font-semibold text-slate-200 mb-3">Statut actuel</h5>
-                    <div class="flex justify-between items-center">
-                        <span class="bg-violet-600 text-white px-3 py-1 rounded-full text-sm">{{ candidature.get_status_display }}</span>
-                        <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">Priorité: {{ candidature.get_priority_display }}</span>
-                        <span class="text-slate-400">ID: {{ candidature.id }}</span>
-                    </div>
-                </div>
-                
-                <div class="text-center mt-6">
-                    <a href="{% url 'candidatures:upload' %}" class="border border-violet-600 text-violet-300 hover:bg-violet-900/30 px-6 py-3 rounded-lg transition-colors duration-200 inline-flex items-center">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                        </svg>
-                        Nouvelle candidature
-                    </a>
-                </div>
+                    Nouvelle candidature
+                </a>
             </div>
         </div>
         {% else %}
