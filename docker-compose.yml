@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      target: ${BUILD_TARGET:-development}
+    container_name: cv-django-app
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - media_data:/app/media
+    environment:
+      - DEBUG=${DEBUG:-True}
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin123
+      - MINIO_SECURE=False
+      - MINIO_BUCKET_NAME=cv-uploads
+    depends_on:
+      - minio
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    networks:
+      - cv-network
+
+  minio:
+    image: minio/minio:latest
+    container_name: cv-minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
+      MINIO_DEFAULT_BUCKETS: cv-uploads
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    networks:
+      - cv-network
+
+  createbuckets:
+    image: minio/mc:latest
+    container_name: cv-minio-setup
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set myminio http://minio:9000 minioadmin minioadmin123;
+      /usr/bin/mc mb myminio/cv-uploads --ignore-existing;
+      /usr/bin/mc anonymous set download myminio/cv-uploads;
+      exit 0;
+      "
+    networks:
+      - cv-network
+
+networks:
+  cv-network:
+    driver: bridge
+
+volumes:
+  minio_data:
+    driver: local
+  media_data:
+    driver: local

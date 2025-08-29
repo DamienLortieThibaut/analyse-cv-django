@@ -1,0 +1,31 @@
+# === CORE DJANGO ===
+Django==5.2.5
+asgiref==3.8.1
+sqlparse==0.5.3
+
+# === API & AUTHENTICATION ===
+djangorestframework==3.14.0
+djangorestframework-simplejwt==5.3.0
+
+# === CORS ===
+django-cors-headers==4.4.0
+
+# === ANTHROPIC & AI ===
+anthropic==0.40.0
+pydantic==2.9.2
+
+# === FILE PROCESSING ===
+pdfminer.six==20250506
+pillow>=9.0.0
+
+# === STORAGE ===
+django-minio-storage==0.5.7
+minio==7.2.12
+
+# === UTILITIES ===
+python-dotenv==1.0.1
+python-decouple==3.8
+requests==2.31.0
+python-slugify==8.0.1
+python-dateutil==2.8.2
+pytz==2023.3
