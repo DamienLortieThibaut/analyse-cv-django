@@ -1,0 +1,167 @@
+{% extends 'candidatures/base.html' %}
+
+{% block title %}Analyse en cours{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body p-5">
+                <h2 class="text-center mb-4">
+                    <i class="bi bi-cpu"></i> Analyse de votre CV en cours
+                </h2>
+                
+                <div id="analysisStatus" class="text-center">
+                    <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;"></div>
+                    <h4>Traitement en cours...</h4>
+                    <p class="text-muted">Notre IA analyse votre CV et extrait les informations pertinentes</p>
+                </div>
+                
+                <div id="progressSteps" class="mt-4">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span id="step1" class="badge bg-primary">1. Upload terminé</span>
+                        <span id="step2" class="badge bg-secondary">2. Extraction du texte</span>
+                        <span id="step3" class="badge bg-secondary">3. Analyse IA</span>
+                        <span id="step4" class="badge bg-secondary">4. Scoring</span>
+                    </div>
+                    <div class="progress" style="height: 30px;">
+                        <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" 
+                             role="progressbar" style="width: 25%">25%</div>
+                    </div>
+                </div>
+                
+                <div id="analysisResult" class="d-none mt-4">
+                    <h3 class="text-center mb-4">Analyse terminée !</h3>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h5>Profil détecté</h5>
+                            <p id="resultHeadline" class="lead"></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Score global</h5>
+                            <div class="d-flex align-items-center">
+                                <div class="progress flex-grow-1" style="height: 25px;">
+                                    <div id="resultScore" class="progress-bar bg-success"></div>
+                                </div>
+                                <span id="resultScoreText" class="ms-3 fs-5 fw-bold"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6>Compétences principales</h6>
+                            <div id="resultSkills"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Expérience</h6>
+                            <p id="resultExperience"></p>
+                            <h6>Formation</h6>
+                            <p id="resultEducation"></p>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <a id="successLink" href="#" class="btn btn-success btn-lg">
+                            <i class="bi bi-check-circle"></i> Voir ma candidature
+                        </a>
+                    </div>
+                </div>
+                
+                <div id="analysisError" class="d-none alert alert-danger mt-4">
+                    <h5><i class="bi bi-exclamation-triangle"></i> Erreur lors de l'analyse</h5>
+                    <p id="errorMessage"></p>
+                    <a href="{% url 'candidatures:upload' %}" class="btn btn-primary">
+                        <i class="bi bi-arrow-left"></i> Réessayer
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let progress = 25;
+    const progressBar = document.getElementById('progressBar');
+    const steps = ['step1', 'step2', 'step3', 'step4'];
+    let currentStep = 0;
+    
+    // Simulate progress
+    const progressInterval = setInterval(() => {
+        if (progress < 50) {
+            progress += 5;
+            progressBar.style.width = progress + '%';
+            progressBar.textContent = progress + '%';
+            
+            if (progress >= 35 && currentStep === 0) {
+                currentStep = 1;
+                document.getElementById('step2').classList.replace('bg-secondary', 'bg-primary');
+            }
+        }
+    }, 300);
+    
+    // Start analysis
+    setTimeout(() => {
+        fetch("{% url 'candidatures:analyze-api' %}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({})
+        })
+        .then(response => response.json())
+        .then(data => {
+            clearInterval(progressInterval);
+            
+            if (data.status === 'success') {
+                // Update progress to 100%
+                progressBar.style.width = '100%';
+                progressBar.textContent = '100%';
+                steps.forEach(stepId => {
+                    document.getElementById(stepId).classList.replace('bg-secondary', 'bg-primary');
+                });
+                
+                // Show results
+                setTimeout(() => {
+                    document.getElementById('analysisStatus').classList.add('d-none');
+                    document.getElementById('progressSteps').classList.add('d-none');
+                    document.getElementById('analysisResult').classList.remove('d-none');
+                    
+                    // Fill results
+                    document.getElementById('resultHeadline').textContent = data.analysis.headline;
+                    document.getElementById('resultScore').style.width = data.analysis.fit_score + '%';
+                    document.getElementById('resultScoreText').textContent = data.analysis.fit_score + '/100';
+                    
+                    // Skills
+                    const skillsDiv = document.getElementById('resultSkills');
+                    data.analysis.skills_primary.forEach(skill => {
+                        skillsDiv.innerHTML += `<span class="badge bg-primary me-2 mb-2">${skill}</span>`;
+                    });
+                    
+                    document.getElementById('resultExperience').textContent = 
+                        data.analysis.years_experience + ' ans d\'expérience';
+                    document.getElementById('resultEducation').textContent = 
+                        data.analysis.education;
+                    
+                    document.getElementById('successLink').href = data.redirect_url;
+                }, 1000);
+            } else {
+                throw new Error(data.message || 'Erreur inconnue');
+            }
+        })
+        .catch(error => {
+            clearInterval(progressInterval);
+            document.getElementById('analysisStatus').classList.add('d-none');
+            document.getElementById('progressSteps').classList.add('d-none');
+            document.getElementById('analysisError').classList.remove('d-none');
+            document.getElementById('errorMessage').textContent = error.message;
+        });
+    }, 1000);
+});
+</script>
+{% endblock %}

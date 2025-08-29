@@ -1,0 +1,168 @@
+{% extends 'candidatures/base.html' %}
+
+{% block title %}Candidature enregistrée{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        {% if candidature %}
+        <div class="card">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <i class="bi bi-check-circle text-success" style="font-size: 4rem;"></i>
+                    <h2 class="mt-3">Candidature enregistrée avec succès !</h2>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>Informations personnelles</h4>
+                        <table class="table">
+                            <tr>
+                                <th>Nom:</th>
+                                <td>{{ candidature.first_name }} {{ candidature.last_name }}</td>
+                            </tr>
+                            <tr>
+                                <th>Email:</th>
+                                <td>{{ candidature.email }}</td>
+                            </tr>
+                            {% if candidature.phone %}
+                            <tr>
+                                <th>Téléphone:</th>
+                                <td>{{ candidature.phone }}</td>
+                            </tr>
+                            {% endif %}
+                            {% if candidature.position_applied %}
+                            <tr>
+                                <th>Poste:</th>
+                                <td>{{ candidature.position_applied }}</td>
+                            </tr>
+                            {% endif %}
+                        </table>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <h4>Analyse du profil</h4>
+                        <div class="mb-3">
+                            <strong>Titre professionnel:</strong>
+                            <p class="lead">{{ candidature.headline }}</p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <strong>Score d'adéquation:</strong>
+                            <div class="d-flex align-items-center">
+                                <div class="progress flex-grow-1" style="height: 25px;">
+                                    <div class="progress-bar bg-success" 
+                                         style="width: {{ candidature.fit_score_overall }}%">
+                                        {{ candidature.fit_score_overall }}%
+                                    </div>
+                                </div>
+                                <span class="ms-3 fs-5 fw-bold">{{ candidature.fit_score_overall }}/100</span>
+                            </div>
+                        </div>
+                        
+                        {% if candidature.fit_scores %}
+                        <div class="mb-3">
+                            <strong>Détails du scoring:</strong>
+                            <div class="row g-2 mt-2">
+                                {% for key, value in candidature.fit_scores.items %}
+                                <div class="col-6">
+                                    <small class="text-muted">{{ key|capfirst }}:</small>
+                                    <div class="progress" style="height: 20px;">
+                                        <div class="progress-bar" style="width: {{ value }}%">
+                                            {{ value|floatformat:0 }}%
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <h5>Compétences</h5>
+                        <div class="mb-2">
+                            <strong>Principales:</strong><br>
+                            {% for skill in candidature.skills_primary %}
+                                <span class="badge bg-primary me-2 mb-2">{{ skill }}</span>
+                            {% endfor %}
+                        </div>
+                        {% if candidature.skills_secondary %}
+                        <div>
+                            <strong>Secondaires:</strong><br>
+                            {% for skill in candidature.skills_secondary %}
+                                <span class="badge bg-secondary me-2 mb-2">{{ skill }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <h5>Détails</h5>
+                        <table class="table table-sm">
+                            <tr>
+                                <th>Expérience:</th>
+                                <td>{{ candidature.years_experience }} ans</td>
+                            </tr>
+                            <tr>
+                                <th>Formation:</th>
+                                <td>{{ candidature.education_highest }}</td>
+                            </tr>
+                            {% if candidature.languages %}
+                            <tr>
+                                <th>Langues:</th>
+                                <td>
+                                    {% for lang in candidature.languages %}
+                                        {% for code, level in lang.items %}
+                                            <span class="badge bg-info">{{ code|upper }}: {{ level }}</span>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% if candidature.locations_preferred %}
+                            <tr>
+                                <th>Localisations:</th>
+                                <td>{{ candidature.locations_preferred|join:", " }}</td>
+                            </tr>
+                            {% endif %}
+                            {% if candidature.availability_date %}
+                            <tr>
+                                <th>Disponibilité:</th>
+                                <td>{{ candidature.availability_date|date:"d/m/Y" }}</td>
+                            </tr>
+                            {% endif %}
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="mt-4 p-3 bg-light rounded">
+                    <h5>Statut actuel</h5>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-primary fs-6">{{ candidature.get_status_display }}</span>
+                        <span class="badge bg-info">Priorité: {{ candidature.get_priority_display }}</span>
+                        <span class="text-muted">ID: {{ candidature.id }}</span>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <a href="{% url 'candidatures:upload' %}" class="btn btn-outline-primary">
+                        <i class="bi bi-plus-circle"></i> Nouvelle candidature
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-warning">
+            <h4>Candidature non trouvée</h4>
+            <p>La candidature demandée n'existe pas ou a été supprimée.</p>
+            <a href="{% url 'candidatures:upload' %}" class="btn btn-primary">
+                <i class="bi bi-arrow-left"></i> Retour au formulaire
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
