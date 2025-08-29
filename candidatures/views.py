@@ -146,7 +146,13 @@ class CandidatureAnalyzeAPIView(View):
                     file_path = pending_data['cv_file_path']
                     print(f"Mode fichier détecté - {file_path}")
                     file_content = default_storage.open(file_path).read()
-                    analysis_result, model_version = service.analyze_cv_from_bytes(file_content)
+                    
+                    # Extraire le nom de fichier original pour aider l'analyse
+                    import os
+                    filename = os.path.basename(file_path)
+                    print(f"Nom de fichier original: {filename}")
+                    
+                    analysis_result, model_version = service.analyze_cv_from_bytes(file_content, filename)
                     print("Analyse fichier terminée avec succès")
                 else:
                     print("ERREUR: Aucune donnée CV trouvée dans la session")
@@ -185,26 +191,49 @@ class CandidatureAnalyzeAPIView(View):
                     'message': f'Erreur création candidature: {str(e)}'
                 }, status=500)
             
-            # Retourner les résultats de l'analyse
+            # Retourner les résultats de l'analyse avec TOUTES les données
             return JsonResponse({
                 'status': 'success',
                 'candidature_id': str(candidature.id),
-                'analysis': {
+                'candidate': {
+                    'first_name': analysis_result.first_name,
+                    'last_name': analysis_result.last_name,
+                    'full_name': f"{analysis_result.first_name} {analysis_result.last_name}",
                     'headline': analysis_result.headline,
-                    'years_experience': float(analysis_result.years_experience),
-                    'skills_primary': analysis_result.skills_primary,
-                    'skills_secondary': analysis_result.skills_secondary,
-                    'education': analysis_result.education_highest,
-                    'languages': analysis_result.languages,
-                    'locations': analysis_result.locations_preferred,
-                    'salary_min': analysis_result.salary_expectation_min,
-                    'salary_max': analysis_result.salary_expectation_max,
-                    'availability': analysis_result.availability_date,
+                    'summary': analysis_result.summary,
+                },
+                'experience': {
+                    'years_total': float(analysis_result.years_experience),
+                    'experiences': analysis_result.experiences,
+                },
+                'education': {
+                    'highest_degree': analysis_result.education_highest,
+                    'education_details': analysis_result.education,
+                },
+                'skills': {
+                    'primary': analysis_result.skills_primary,
+                    'secondary': analysis_result.skills_secondary,
+                },
+                'languages': analysis_result.languages,
+                'personal': {
+                    'interests': analysis_result.interests,
+                    'locations_preferred': analysis_result.locations_preferred,
+                    'availability_date': analysis_result.availability_date,
                     'work_authorization': analysis_result.work_authorization,
-                    'fit_score': float(analysis_result.fit_score_overall),
-                    'fit_scores': {
+                },
+                'salary': {
+                    'expectation_min': analysis_result.salary_expectation_min,
+                    'expectation_max': analysis_result.salary_expectation_max,
+                },
+                'scoring': {
+                    'fit_score_overall': float(analysis_result.fit_score_overall),
+                    'fit_scores_detailed': {
                         k: float(v) for k, v in analysis_result.fit_scores.items()
                     }
+                },
+                'metadata': {
+                    'analyzed_at': candidature.analyzed_at.isoformat() if candidature.analyzed_at else None,
+                    'model_version': model_version,
                 },
                 'redirect_url': f'/candidatures/{candidature.id}/'
             })
