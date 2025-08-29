@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}{% block candidature_title %}Analyse CV{% endblock %}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="mb-4 p-4 rounded-lg {% if message.tags == 'success' %}bg-emerald-100 border border-emerald-400 text-emerald-700{% elif message.tags == 'error' %}bg-red-100 border border-red-400 text-red-700{% else %}bg-blue-100 border border-blue-400 text-blue-700{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    {% block candidature_content %}{% endblock %}
+</div>
+{% endblock %}
