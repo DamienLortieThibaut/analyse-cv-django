@@ -1,0 +1,531 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {% block title %}{{ title|default:"Analyse CV" }}{% endblock %}
+    </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#6366f1",
+              secondary: "#8b5cf6",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="bg-slate-950 text-white min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-slate-900 border-b border-slate-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+          <!-- Logo et nom du site -->
+          <div class="flex items-center">
+            <a
+              href="{% url 'accounts:home' %}"
+              class="flex items-center space-x-3"
+            >
+              <div
+                class="w-8 h-8 bg-gradient-to-r from-violet-500 to-purple-600 rounded-lg flex items-center justify-center"
+              >
+                <svg
+                  class="w-5 h-5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  ></path>
+                </svg>
+              </div>
+              <span class="text-xl font-bold text-white">Analyse CV</span>
+            </a>
+          </div>
+
+          <!-- Menu principal -->
+          <div class="hidden md:flex items-center space-x-8">
+            {% if user.is_authenticated %}
+            <!-- Menu pour utilisateurs connectés -->
+            <!-- <a
+              href="{% url 'accounts:dashboard' %}"
+              class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors {% if request.resolver_match.url_name == 'dashboard' %}bg-slate-800 text-white{% endif %}"
+            > -->
+            <a
+              href="{% url 'accounts:dashboard' %}"
+              class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors {% if request.resolver_match.url_name == 'dashboard' %}bg-slate-800 text-white{% endif %}"
+            >
+              <svg
+                class="w-4 h-4 inline-block mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 12l9-9 9 9M4 10v10a1 1 0 001 1h5a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h5a1 1 0 001-1V10"
+                ></path>
+              </svg>
+              Accueil
+            </a>
+            
+            <a
+              href="{% url 'dashboard:home' %}"
+              class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors {% if request.resolver_match.url_name == 'dashboard' %}bg-slate-800 text-white{% endif %}"
+            >
+              <svg
+                class="w-4 h-4 inline-block mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"
+                ></path>
+              </svg>
+              Tableau de bord
+            </a>
+
+            {% if user.is_candidat %}
+            <!-- Menu spécifique aux candidats -->
+            <a
+              href="#"
+              class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              <svg
+                class="w-4 h-4 inline-block mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                ></path>
+              </svg>
+              Mes Candidatures
+            </a>
+            <a
+              href="#"
+              class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              <svg
+                class="w-4 h-4 inline-block mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                ></path>
+              </svg>
+              Rechercher Emplois
+            </a>
+            {% elif user.is_recruteur %}
+            <!-- Menu spécifique aux recruteurs -->
+            <a
+              href="{% url 'candidatures:list' %}"
+              class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              <svg
+                class="w-4 h-4 inline-block mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                ></path>
+              </svg>
+              Candidats
+            </a>
+            {% elif user.is_admin %}
+            <!-- Menu spécifique aux administrateurs -->
+            <a
+              href="{% url 'accounts:admin_users' %}"
+              class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors {% if request.resolver_match.url_name == 'admin_users' %}bg-slate-800 text-white{% endif %}"
+            >
+              <svg
+                class="w-4 h-4 inline-block mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
+                ></path>
+              </svg>
+              Gestion Utilisateurs
+            </a>
+            <a
+              href="#"
+              class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              <svg
+                class="w-4 h-4 inline-block mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 00-2-2z"
+                ></path>
+              </svg>
+              Statistiques
+            </a>
+            {% endif %}
+
+            <!-- Menu profil utilisateur -->
+            <div class="relative group">
+              <button
+                id="user-menu-button"
+                class="flex items-center space-x-2 text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                aria-expanded="false"
+                aria-haspopup="true"
+              >
+                <div
+                  class="w-6 h-6 bg-gradient-to-r from-violet-500 to-purple-600 rounded-full flex items-center justify-center"
+                >
+                  <span class="text-xs font-semibold"
+                    >{{ user.first_name.0|upper }}</span
+                  >
+                </div>
+                <span>{{ user.first_name }}</span>
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 9l-7 7-7-7"
+                  ></path>
+                </svg>
+              </button>
+
+              <!-- Menu déroulant profil -->
+              <div
+                class="absolute right-0 mt-2 w-48 bg-slate-800 rounded-md shadow-lg border border-slate-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50"
+              >
+                <div class="py-1">
+                  <div
+                    class="px-4 py-2 text-xs text-slate-400 border-b border-slate-700"
+                  >
+                    {{ user.email }}
+                    <div class="text-violet-400 font-medium">
+                      {{ user.get_role_display }}
+                    </div>
+                  </div>
+                  <a
+                    href="{% url 'accounts:profile' %}"
+                    class="block px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors {% if request.resolver_match.url_name == 'profile' %}bg-slate-700 text-white{% endif %}"
+                  >
+                    <svg
+                      class="w-4 h-4 inline-block mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                      ></path>
+                    </svg>
+                    Mon Profil
+                  </a>
+                  <a
+                    href="{% url 'accounts:change_password' %}"
+                    class="block px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                  >
+                    <svg
+                      class="w-4 h-4 inline-block mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
+                      ></path>
+                    </svg>
+                    Changer mot de passe
+                  </a>
+                  <hr class="border-slate-700" />
+                  <a
+                    href="{% url 'accounts:logout' %}"
+                    class="block px-4 py-2 text-sm text-red-400 hover:bg-red-900/20 hover:text-red-300 transition-colors"
+                  >
+                    <svg
+                      class="w-4 h-4 inline-block mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                      ></path>
+                    </svg>
+                    Déconnexion
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {% else %}
+            <!-- Menu pour utilisateurs non connectés -->
+            <a
+              href="{% url 'accounts:home' %}"
+              class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors {% if request.resolver_match.url_name == 'home' %}bg-slate-800 text-white{% endif %}"
+            >
+              Accueil
+            </a>
+            <a
+              href="{% url 'accounts:login' %}"
+              class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors {% if request.resolver_match.url_name == 'login' %}bg-slate-800 text-white{% endif %}"
+            >
+              Connexion
+            </a>
+            <a
+              href="{% url 'accounts:register' %}"
+              class="bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors {% if request.resolver_match.url_name == 'register' %}bg-violet-700{% endif %}"
+            >
+              Inscription
+            </a>
+            {% endif %}
+          </div>
+
+          <!-- Menu mobile hamburger -->
+          <div class="md:hidden flex items-center">
+            <button
+              id="mobile-menu-button"
+              class="text-slate-400 hover:text-white focus:outline-none focus:text-white"
+            >
+              <svg
+                class="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                ></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Menu mobile -->
+      <div id="mobile-menu" class="md:hidden hidden bg-slate-800">
+        <div class="px-2 pt-2 pb-3 space-y-1">
+          {% if user.is_authenticated %}
+          <a
+            href="{% url 'accounts:dashboard' %}"
+            class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+          >
+            Tableau de bord
+          </a>
+
+          {% if user.is_candidat %}
+          <a
+            href="#"
+            class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+          >
+            Mes Candidatures
+          </a>
+          <a
+            href="#"
+            class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+          >
+            Rechercher Emplois
+          </a>
+          {% elif user.is_recruteur %}
+          <a
+            href="#"
+            class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+          >
+            Candidats
+          </a>
+          {% elif user.is_admin %}
+          <a
+            href="{% url 'accounts:admin_users' %}"
+            class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+          >
+            Gestion Utilisateurs
+          </a>
+          <a
+            href="#"
+            class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+          >
+            Statistiques
+          </a>
+          {% endif %}
+
+          <div class="border-t border-slate-700 pt-4">
+            <div class="px-3 py-2 text-sm text-slate-400">
+              {{ user.email }} - {{ user.get_role_display }}
+            </div>
+            <a
+              href="{% url 'accounts:profile' %}"
+              class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+            >
+              Mon Profil
+            </a>
+            <a
+              href="{% url 'accounts:change_password' %}"
+              class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+            >
+              Changer mot de passe
+            </a>
+            <a
+              href="{% url 'accounts:logout' %}"
+              class="block px-3 py-2 rounded-md text-base font-medium text-red-400 hover:text-red-300 hover:bg-red-900/20 transition-colors"
+            >
+              Déconnexion
+            </a>
+          </div>
+          {% else %}
+          <a
+            href="{% url 'accounts:home' %}"
+            class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+          >
+            Accueil
+          </a>
+          <a
+            href="{% url 'accounts:login' %}"
+            class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+          >
+            Connexion
+          </a>
+          <a
+            href="{% url 'accounts:register' %}"
+            class="block px-3 py-2 rounded-md text-base font-medium bg-violet-600 text-white hover:bg-violet-700 transition-colors"
+          >
+            Inscription
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </nav>
+
+    <!-- Contenu principal -->
+    <main class="min-h-screen">{% block content %} {% endblock %}</main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 border-t border-slate-800 mt-auto">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="text-center text-slate-400">
+          <p>&copy; 2025 Analyse CV. Tous droits réservés.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- JavaScript pour le menu mobile et dropdown -->
+    <script>
+      // Menu mobile
+      document
+        .getElementById("mobile-menu-button")
+        .addEventListener("click", function () {
+          const mobileMenu = document.getElementById("mobile-menu");
+          mobileMenu.classList.toggle("hidden");
+        });
+
+      // Menu dropdown profil utilisateur
+      const userMenuButton = document.getElementById("user-menu-button");
+      if (userMenuButton) {
+        let timeout;
+        const dropdown = userMenuButton.parentElement;
+
+        // Afficher le menu au survol
+        dropdown.addEventListener("mouseenter", function () {
+          clearTimeout(timeout);
+          dropdown
+            .querySelector(".absolute")
+            .classList.remove("opacity-0", "invisible");
+          dropdown
+            .querySelector(".absolute")
+            .classList.add("opacity-100", "visible");
+        });
+
+        // Masquer le menu quand on quitte la zone
+        dropdown.addEventListener("mouseleave", function () {
+          timeout = setTimeout(() => {
+            dropdown
+              .querySelector(".absolute")
+              .classList.add("opacity-0", "invisible");
+            dropdown
+              .querySelector(".absolute")
+              .classList.remove("opacity-100", "visible");
+          }, 100);
+        });
+
+        // Toggle au clic (pour mobile)
+        userMenuButton.addEventListener("click", function (e) {
+          e.preventDefault();
+          const dropdownMenu = dropdown.querySelector(".absolute");
+          if (dropdownMenu.classList.contains("opacity-0")) {
+            dropdownMenu.classList.remove("opacity-0", "invisible");
+            dropdownMenu.classList.add("opacity-100", "visible");
+          } else {
+            dropdownMenu.classList.add("opacity-0", "invisible");
+            dropdownMenu.classList.remove("opacity-100", "visible");
+          }
+        });
+      }
+
+      // Fermer les menus en cliquant ailleurs
+      document.addEventListener("click", function (e) {
+        // Fermer le menu profil
+        const userDropdown = document.querySelector(
+          ".relative.group .absolute"
+        );
+        if (userDropdown && !e.target.closest(".relative.group")) {
+          userDropdown.classList.add("opacity-0", "invisible");
+          userDropdown.classList.remove("opacity-100", "visible");
+        }
+      });
+    </script>
+  </body>
+</html>

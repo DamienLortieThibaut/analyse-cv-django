@@ -41,3 +41,7 @@ Thumbs.db
 # Temporary files
 tesseract-installer.exe
 *.exe
+myvenv/
+venv/
+*__pycache__*
+db.sqlite3

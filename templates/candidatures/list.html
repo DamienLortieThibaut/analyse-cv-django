@@ -1,0 +1,51 @@
+{% extends 'dashboard/index.html' %}
+
+{% block title %}GRH Smart · Candidatures{% endblock %}
+
+{% block header_title %}GRH Smart · Candidatures{% endblock %}
+
+{% block content %}
+<div class="container mx-auto space-y-6 mt-5 mb-5">
+
+    <!-- HEADER -->
+    <header class="flex items-start justify-between mb-8">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-400 to-violet-300 grid place-items-center shadow-lg">
+          <svg class="w-5 h-5 text-slate-900" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2 .89 2 2 2 2-.89 2-2-.89-2-2-2-2 .89-2 2zm4 18v-6h2.5l-2.54-7.63A1.5 1.5 0 0 0 18.54 8H16c-.8 0-1.54.37-2 1l-3 4v7h2v7h7v-3z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-xl font-semibold">Candidatures</h1>
+          <p class="text-xs text-slate-400">{{ candidatures|length }} candidatures trouvées</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="px-3 py-2 rounded-xl border border-slate-800 bg-slate-900 hover:bg-slate-800 transition">
+          Exporter CSV
+        </button>
+      </div>
+    </header>
+
+    <!-- FILTRES -->
+    {% include 'candidatures/widgets/filter_form.html' %}
+
+    <!-- CARDS GRID -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between mb-4">
+        <p class="text-sm text-slate-300">Liste des candidatures</p>
+        <span class="text-xs text-slate-400">{{ candidatures|length }} résultats</span>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        {% for candidature in candidatures %}
+          {% include 'candidatures/widgets/candidature_card.html' with candidature=candidature %}
+        {% empty %}
+          {% include 'candidatures/widgets/empty_state.html' %}
+        {% endfor %}
+      </div>
+    </section>
+
+</div>
+{% endblock %}
+          

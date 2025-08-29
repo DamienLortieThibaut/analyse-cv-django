@@ -7,8 +7,6 @@ from .views import (
     CandidatureSuccessView
 )
 
-
-
 app_name = 'candidatures'
 
 urlpatterns = [
