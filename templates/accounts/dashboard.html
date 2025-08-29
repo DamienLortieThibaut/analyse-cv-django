@@ -256,7 +256,8 @@ block.super }}{% endblock %} {% block content %}
         Actions rapides - Recrutement
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <button
+        <a
+          href="{% url 'candidatures:list' %}"
           class="p-4 rounded-xl border border-slate-800 bg-slate-900 hover:bg-slate-800 transition text-center w-full"
         >
           <svg
@@ -269,7 +270,7 @@ block.super }}{% endblock %} {% block content %}
             />
           </svg>
           <div class="text-slate-200 font-medium">Rechercher des candidats</div>
-        </button>
+        </a>
         <button
           class="p-4 rounded-xl border border-slate-800 bg-slate-900 hover:bg-slate-800 transition text-center w-full"
         >
