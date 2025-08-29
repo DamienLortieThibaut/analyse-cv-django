@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.contrib import messages
 from django.db.models import Q
 from datetime import datetime, timedelta
+from accounts.decorators import recruteur_or_admin_required
 
 # Données fictives pour les candidatures
 CANDIDATURES_FICTIVES = [
@@ -114,10 +115,12 @@ class CandidatureFictive:
     def get_statut_display(self):
         return STATUTS_CHOICES.get(self.statut, self.statut)
 
+@recruteur_or_admin_required
 def index(request):
     """Page d'accueil de l'app candidatures"""
     return render(request, 'candidatures/index.html')
 
+@recruteur_or_admin_required
 def list_candidatures(request):
     """Liste des candidatures avec filtres"""
     candidatures_data = CANDIDATURES_FICTIVES.copy()
@@ -152,6 +155,7 @@ def list_candidatures(request):
     }
     return render(request, 'candidatures/list.html', context)
 
+@recruteur_or_admin_required
 def detail_candidature(request, pk):
     """Détail d'une candidature"""
     candidature_data = next((c for c in CANDIDATURES_FICTIVES if c['pk'] == pk), None)
@@ -167,6 +171,7 @@ def detail_candidature(request, pk):
     }
     return render(request, 'candidatures/detail.html', context)
 
+@recruteur_or_admin_required
 def delete_candidature(request, pk):
     """Suppression d'une candidature"""
     candidature_data = next((c for c in CANDIDATURES_FICTIVES if c['pk'] == pk), None)
