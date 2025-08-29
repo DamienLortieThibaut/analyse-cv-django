@@ -199,49 +199,14 @@ block.super }}{% endblock %} {% block content %}
 
   {% elif user.role == 'recruteur' %}
   <!-- Dashboard Recruteur -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-    <div class="col-span-1 sm:col-span-2 lg:col-span-1">
-      <div
-        class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-lg"
-      >
-        <div class="flex items-center justify-between">
-          <div>
-            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-              Candidatures reçues
-            </div>
-            <div class="text-lg font-semibold text-slate-100">
-              {{ stats.candidatures_recues|default:0 }}
-            </div>
-          </div>
-          <div class="ml-4">
-            <i class="fas fa-file-alt fa-2x text-info"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-span-1 sm:col-span-2 lg:col-span-1">
-      <div
-        class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-lg"
-      >
-        <div class="flex items-center justify-between">
-          <div>
-            <div
-              class="text-xs font-weight-bold text-success text-uppercase mb-1"
-            >
-              Entretiens planifiés
-            </div>
-            <div class="text-lg font-semibold text-slate-100">
-              {{ stats.entretiens|default:0 }}
-            </div>
-          </div>
-          <div class="ml-4">
-            <i class="fas fa-calendar-check fa-2x text-success"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  
+  <!-- KPIs pour recruteurs -->
+  <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    {% include 'dashboard/widgets/kpi_card.html' with label="Candidatures reçues" value=stats.candidatures_recues|default:0 %}
+    {% include 'dashboard/widgets/kpi_card.html' with label="En évaluation" value=stats.en_evaluation|default:0 %}
+    {% include 'dashboard/widgets/kpi_card.html' with label="Présélectionnés" value=stats.preselectionnes|default:0 %}
+    {% include 'dashboard/widgets/kpi_card.html' with label="Entretiens programmés" value=stats.entretiens_programmes|default:0 %}
+  </section>
 
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <div
@@ -256,7 +221,8 @@ block.super }}{% endblock %} {% block content %}
         Actions rapides - Recrutement
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <button
+        <a
+          href="{% url 'candidatures:list' %}"
           class="p-4 rounded-xl border border-slate-800 bg-slate-900 hover:bg-slate-800 transition text-center w-full"
         >
           <svg
@@ -269,21 +235,7 @@ block.super }}{% endblock %} {% block content %}
             />
           </svg>
           <div class="text-slate-200 font-medium">Rechercher des candidats</div>
-        </button>
-        <button
-          class="p-4 rounded-xl border border-slate-800 bg-slate-900 hover:bg-slate-800 transition text-center w-full"
-        >
-          <svg
-            class="w-6 h-6 text-info-400 mx-auto mb-2"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-          >
-            <path
-              d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
-            />
-          </svg>
-          <div class="text-slate-200 font-medium">Candidatures reçues</div>
-        </button>
+        </a>
       </div>
     </div>
     <div class="col-span-1 sm:col-span-2 lg:col-span-1">
@@ -293,71 +245,12 @@ block.super }}{% endblock %} {% block content %}
 
   {% elif user.role == 'candidat' %}
   <!-- Dashboard Candidat -->
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-    <div class="col-span-1 sm:col-span-2 lg:col-span-1">
-      <div
-        class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-lg"
-      >
-        <div class="flex items-center justify-between">
-          <div>
-            <div
-              class="text-xs font-weight-bold text-success text-uppercase mb-1"
-            >
-              Mes candidatures
-            </div>
-            <div class="text-lg font-semibold text-slate-100">
-              {{ stats.mes_candidatures|default:0 }}
-            </div>
-          </div>
-          <div class="ml-4">
-            <i class="fas fa-paper-plane fa-2x text-success"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-span-1 sm:col-span-2 lg:col-span-1">
-      <div
-        class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-lg"
-      >
-        <div class="flex items-center justify-between">
-          <div>
-            <div
-              class="text-xs font-weight-bold text-warning text-uppercase mb-1"
-            >
-              En attente
-            </div>
-            <div class="text-lg font-semibold text-slate-100">
-              {{ stats.candidatures_en_attente|default:0 }}
-            </div>
-          </div>
-          <div class="ml-4">
-            <i class="fas fa-clock fa-2x text-warning"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-span-1 sm:col-span-2 lg:col-span-1">
-      <div
-        class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-lg"
-      >
-        <div class="flex items-center justify-between">
-          <div>
-            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-              Entretiens
-            </div>
-            <div class="text-lg font-semibold text-slate-100">
-              {{ stats.mes_entretiens|default:0 }}
-            </div>
-          </div>
-          <div class="ml-4">
-            <i class="fas fa-handshake fa-2x text-info"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    {% include 'dashboard/widgets/kpi_card.html' with label="Mes candidatures" value=candidatures_count|default:0 %}
+    {% include 'dashboard/widgets/kpi_card.html' with label="En attente" value=candidatures_en_attente|default:0 %}
+    {% include 'dashboard/widgets/kpi_card.html' with label="Présélectionnées" value=candidatures_preselection|default:0 %}
+    {% include 'dashboard/widgets/kpi_card.html' with label="Entretiens" value=candidatures_entretien|default:0 %}
+  </section>
 
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <div
@@ -372,8 +265,9 @@ block.super }}{% endblock %} {% block content %}
         Actions rapides - Recherche d'emploi
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <button
-          class="p-4 rounded-xl border border-slate-800 bg-slate-900 hover:bg-slate-800 transition text-center w-full"
+        <a
+          href="{% url 'candidatures:upload' %}"
+          class="p-4 rounded-xl border border-slate-800 bg-slate-900 hover:bg-slate-800 transition text-center w-full block"
         >
           <svg
             class="w-6 h-6 text-slate-400 mx-auto mb-2"
@@ -383,9 +277,10 @@ block.super }}{% endblock %} {% block content %}
             <path d="M3 3h18v18H3V3zm2 2v14h14V5H5z" />
           </svg>
           <div class="text-slate-200 font-medium">Télécharger mon CV</div>
-        </button>
-        <button
-          class="p-4 rounded-xl border border-slate-800 bg-slate-900 hover:bg-slate-800 transition text-center w-full"
+        </a>
+        <a
+            href="{% url 'candidatures:list-id' id=user.id %}"
+          class="p-4 rounded-xl border border-slate-800 bg-slate-900 hover:bg-slate-800 transition text-center w-full block"
         >
           <svg
             class="w-6 h-6 text-success-400 mx-auto mb-2"
@@ -397,19 +292,7 @@ block.super }}{% endblock %} {% block content %}
             />
           </svg>
           <div class="text-slate-200 font-medium">Mes candidatures</div>
-        </button>
-        <button
-          class="p-4 rounded-xl border border-slate-800 bg-slate-900 hover:bg-slate-800 transition text-center w-full"
-        >
-          <svg
-            class="w-6 h-6 text-warning-400 mx-auto mb-2"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-          >
-            <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <div class="text-slate-200 font-medium">Offres sauvegardées</div>
-        </button>
+        </a>
       </div>
     </div>
     <div class="col-span-1 sm:col-span-2 lg:col-span-1">

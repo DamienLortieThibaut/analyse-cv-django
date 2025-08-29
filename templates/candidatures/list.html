@@ -5,7 +5,7 @@
 {% block header_title %}GRH Smart · Candidatures{% endblock %}
 
 {% block content %}
-<div class="container mx-auto space-y-6">
+<div class="container mx-auto space-y-6 mt-5 mb-5">
 
     <!-- HEADER -->
     <header class="flex items-start justify-between mb-8">
@@ -28,52 +28,7 @@
     </header>
 
     <!-- FILTRES -->
-    <section class="rounded-2xl border border-slate-800 bg-slate-900/60 backdrop-blur p-4 shadow-lg mb-8">
-      <form method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        <label class="flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-900 px-3 py-2">
-          <span class="text-slate-400 text-sm">Poste</span>
-          <select name="poste" class="bg-transparent outline-none flex-1 text-sm">
-            <option value="">Tous</option>
-            <option value="data_analyst">Data Analyst</option>
-            <option value="dev_front">Développeur Front</option>
-            <option value="qa_engineer">QA Engineer</option>
-            <option value="product_manager">Product Manager</option>
-            <option value="ux_designer">UX Designer</option>
-          </select>
-        </label>
-        
-        <label class="flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-900 px-3 py-2">
-          <span class="text-slate-400 text-sm">Statut</span>
-          <select name="statut" class="bg-transparent outline-none flex-1 text-sm">
-            <option value="">Tous</option>
-            <option value="soumise">Soumise</option>
-            <option value="en_revue">En revue</option>
-            <option value="preselection">Présélection</option>
-            <option value="rejetee">Rejetée</option>
-            <option value="embauchee">Embauché(e)</option>
-          </select>
-        </label>
-        
-        <label class="flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-900 px-3 py-2">
-          <span class="text-slate-400 text-sm">Score min</span>
-          <input type="number" name="score_min" min="0" max="100" placeholder="0" class="bg-transparent outline-none flex-1 text-sm placeholder:text-slate-500">
-        </label>
-        
-        <label class="flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-900 px-3 py-2">
-          <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="currentColor"><path d="M10 4a6 6 0 104.472 10.027l4.25 4.251 1.415-1.415-4.25-4.25A6 6 0 0010 4z"/></svg>
-          <input type="text" name="search" placeholder="Rechercher par nom…" class="bg-transparent outline-none flex-1 text-sm placeholder:text-slate-500" value="{{ request.GET.search }}">
-        </label>
-        
-        <div class="lg:col-span-4 flex gap-2">
-          <button type="submit" class="px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 transition text-sm">
-            Filtrer
-          </button>
-          <a href="{% url 'candidatures:list' %}" class="px-4 py-2 rounded-xl border border-slate-800 bg-slate-900 hover:bg-slate-800 transition text-sm">
-            Réinitialiser
-          </a>
-        </div>
-      </form>
-    </section>
+    {% include 'candidatures/widgets/filter_form.html' %}
 
     <!-- CARDS GRID -->
     <section class="space-y-4">
@@ -84,93 +39,13 @@
       
       <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {% for candidature in candidatures %}
-        <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-lg hover:bg-slate-900/80 transition group">
-          <!-- Header de la carte -->
-          <div class="flex items-start justify-between mb-4">
-            <div class="flex items-center gap-3">
-              <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-400 to-violet-300 grid place-items-center shadow-lg">
-                <svg class="w-6 h-6 text-slate-900" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                </svg>
-              </div>
-              <div>
-                <h3 class="font-semibold text-slate-100">{{ candidature.nom }}</h3>
-                <p class="text-sm text-slate-400">{{ candidature.get_poste_display }}</p>
-              </div>
-            </div>
-            
-            <!-- Statut Badge -->
-            <div class="text-right">
-              {% if candidature.statut == 'soumise' %}
-                <span class="inline-flex items-center rounded-full px-3 py-1 text-xs bg-sky-950 text-sky-300">Soumise</span>
-              {% elif candidature.statut == 'en_revue' %}
-                <span class="inline-flex items-center rounded-full px-3 py-1 text-xs bg-amber-950 text-amber-300">En revue</span>
-              {% elif candidature.statut == 'preselection' %}
-                <span class="inline-flex items-center rounded-full px-3 py-1 text-xs bg-emerald-950 text-emerald-300">Présélection</span>
-              {% elif candidature.statut == 'rejetee' %}
-                <span class="inline-flex items-center rounded-full px-3 py-1 text-xs bg-rose-950 text-rose-300">Rejetée</span>
-              {% elif candidature.statut == 'embauchee' %}
-                <span class="inline-flex items-center rounded-full px-3 py-1 text-xs bg-cyan-950 text-cyan-300">Embauché(e)</span>
-              {% endif %}
-            </div>
-          </div>
-
-          <!-- Informations -->
-          <div class="grid grid-cols-2 gap-4 mb-4">
-            <div>
-              <p class="text-xs text-slate-400 mb-1">Score</p>
-              <p class="text-lg font-bold {% if candidature.score >= 80 %}text-emerald-400{% elif candidature.score >= 60 %}text-amber-400{% else %}text-rose-400{% endif %}">
-                {{ candidature.score }}<span class="text-sm font-normal text-slate-400">/100</span>
-              </p>
-            </div>
-            <div>
-              <p class="text-xs text-slate-400 mb-1">Date création</p>
-              <p class="text-sm font-medium text-slate-200">{{ candidature.date_creation|date:"d/m/Y" }}</p>
-              <p class="text-xs text-slate-400">{{ candidature.date_creation|date:"H:i" }}</p>
-            </div>
-          </div>
-
-          <!-- Actions -->
-          <div class="flex items-center justify-between pt-4 border-t border-slate-800">
-            <div class="flex items-center gap-1">
-              <a href="{% url 'candidatures:detail' candidature.pk %}" class="p-2 rounded-lg hover:bg-slate-800 transition" title="Voir détail">
-                <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
-                </svg>
-              </a>
-            </div>
-            
-            <a href="{% url 'candidatures:detail' candidature.pk %}" class="px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-700 transition text-sm text-white">
-              Voir détail
-            </a>
-          </div>
-        </div>
+          {% include 'candidatures/widgets/candidature_card.html' with candidature=candidature %}
         {% empty %}
-        <div class="col-span-full">
-          <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-12 text-center">
-            <div class="w-16 h-16 mx-auto rounded-full bg-slate-800 grid place-items-center mb-4">
-              <svg class="w-8 h-8 text-slate-400" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1H5C3.89 1 3 1.89 3 3V21A2 2 0 0 0 5 23H19A2 2 0 0 0 21 21V9Z"/>
-              </svg>
-            </div>
-            <h3 class="text-lg font-semibold text-slate-300 mb-2">Aucune candidature trouvée</h3>
-            <p class="text-slate-400 mb-4">Ajustez vos filtres ou créez une nouvelle candidature</p>
-            <a href="" class="inline-flex items-center px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-700 transition text-white">
-              + Nouvelle candidature
-            </a>
-          </div>
-        </div>
+          {% include 'candidatures/widgets/empty_state.html' %}
         {% endfor %}
-      </div>
-
-      <!-- Bouton de toggle vue (optionnel) -->
-      <div class="flex justify-center pt-6">
-        <div class="inline-flex rounded-lg border border-slate-800 bg-slate-900 p-1">
-          <button class="px-3 py-2 rounded-md bg-violet-600 text-white text-sm">Cartes</button>
-          <button class="px-3 py-2 rounded-md hover:bg-slate-800 transition text-sm">Tableau</button>
-        </div>
       </div>
     </section>
 
 </div>
 {% endblock %}
+          

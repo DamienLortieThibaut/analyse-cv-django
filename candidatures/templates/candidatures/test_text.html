@@ -1,0 +1,75 @@
+{% extends 'candidatures/base.html' %}
+
+{% block candidature_title %}Test Analyse Texte{% endblock %}
+
+{% block candidature_content %}
+<div class="flex justify-center">
+    <div class="w-full max-w-2xl">
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-lg">
+            <h2 class="text-center text-3xl font-bold text-slate-100 mb-6">
+                Test Analyse avec Texte
+            </h2>
+            
+            <form method="post" id="testForm">
+                {% csrf_token %}
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-slate-300 mb-2">
+                        Email *
+                    </label>
+                    <input type="email" name="email" required
+                           class="w-full px-3 py-2 border border-slate-700 bg-slate-800 text-slate-100 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500" 
+                           placeholder="votre.email@example.com">
+                </div>
+                
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-slate-300 mb-2">
+                        Contenu de votre CV *
+                    </label>
+                    <textarea name="cv_text" required rows="15"
+                              class="w-full px-3 py-2 border border-slate-700 bg-slate-800 text-slate-100 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500" 
+                              placeholder="Copiez-collez le contenu de votre CV ici...
+
+Exemple de structure recommandée:
+[NOM PRÉNOM]
+[Titre professionnel]
+Email: [votre.email@example.com]
+
+EXPÉRIENCE PROFESSIONNELLE
+• [Poste] - [Entreprise] ([Période])
+• [Description des responsabilités]
+
+COMPÉTENCES
+• [Compétence 1], [Compétence 2], [Compétence 3]
+
+FORMATION
+• [Diplôme] - [Établissement]
+
+LANGUES
+• [Langue 1]: [Niveau]
+• [Langue 2]: [Niveau]"></textarea>
+                </div>
+                
+                <div class="text-center">
+                    <button type="submit" class="bg-violet-600 hover:bg-violet-700 text-white font-medium py-3 px-8 rounded-lg text-lg transition-colors duration-200 shadow-lg">
+                        Analyser avec Claude
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <div class="text-center mt-6 text-slate-300">
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('testForm').addEventListener('submit', function(e) {
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = 'Analyse en cours...';
+});
+</script>
+{% endblock %}
