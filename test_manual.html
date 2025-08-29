@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Manuel CV Analysis</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h1>Test Manuel de l'Analyse CV</h1>
+    
+    <h2>1. Étapes à suivre :</h2>
+    <ol>
+        <li>Aller sur <a href="http://127.0.0.1:8000/candidatures/test-text/" target="_blank">http://127.0.0.1:8000/candidatures/test-text/</a></li>
+        <li>Remplir le formulaire avec :
+            <ul>
+                <li><strong>Email:</strong> test@example.com</li>
+                <li><strong>CV (texte):</strong> Copier le CV de test ci-dessous</li>
+            </ul>
+        </li>
+        <li>Cliquer sur "Analyser"</li>
+        <li>Observer la page d'analyse</li>
+        <li>Ouvrir la console développeur (F12) pour voir les logs</li>
+    </ol>
+    
+    <h2>2. CV de Test :</h2>
+    <textarea rows="20" cols="80" readonly>
+Marie Dupont
+Développeuse Python Senior
+Email: marie.dupont@email.com
+Téléphone: 01 23 45 67 89
+
+EXPÉRIENCE PROFESSIONNELLE
+- Senior Developer chez TechCorp (2020-2024)
+  • Développement d'applications web avec Django et React
+  • Gestion d'équipe de 3 développeurs juniors
+  • Architecture microservices avec Docker et AWS
+
+- Développeur Junior chez StartupXYZ (2018-2020)
+  • Développement d'API REST avec Python/Flask
+  • Intégration de bases de données PostgreSQL
+
+FORMATION
+- Master Informatique, Université Paris-Saclay (2016-2018)
+- Licence Informatique, Université de Versailles (2013-2016)
+
+COMPÉTENCES TECHNIQUES
+- Langages: Python, JavaScript, SQL, HTML/CSS
+- Frameworks: Django, React, Flask, Vue.js
+- Outils: Git, Docker, AWS, PostgreSQL, Redis
+- Méthodes: Agile, TDD, CI/CD
+
+LANGUES
+- Français: Natif
+- Anglais: Courant (niveau B2)
+- Espagnol: Notions (niveau A2)
+    </textarea>
+    
+    <h2>3. Ce qui devrait se passer :</h2>
+    <ul>
+        <li>✅ Après submit → Redirection vers /candidatures/analyze/</li>
+        <li>✅ Animation de progress bar</li>
+        <li>✅ Appel automatique à l'API /candidatures/analyze-api/</li>
+        <li>✅ Affichage des résultats d'analyse</li>
+        <li>✅ Score global autour de 75-85/100</li>
+        <li>✅ Nom détecté : Marie Dupont</li>
+        <li>✅ Compétences : Python, Django, JavaScript, etc.</li>
+    </ul>
+    
+    <h2>4. Debug dans la console :</h2>
+    <p>Dans la console développeur, vous devriez voir :</p>
+    <ul>
+        <li><code>Starting analysis...</code></li>
+        <li><code>API URL: /candidatures/analyze-api/</code></li>
+        <li><code>CSRF Token: [un token]</code></li>
+        <li><code>Response status: 200</code></li>
+        <li><code>Analysis result: {status: "success", ...}</code></li>
+    </ul>
+    
+    <h2>5. En cas d'erreur :</h2>
+    <p>Vérifier :</p>
+    <ul>
+        <li>Que le serveur Django tourne sur <code>http://127.0.0.1:8000</code></li>
+        <li>Les logs dans la console développeur</li>
+        <li>Les logs dans le terminal du serveur Django</li>
+    </ul>
+    
+    <hr>
+    <p><strong>Note:</strong> Ce test vérifie le workflow complet depuis l'interface utilisateur.</p>
+</body>
+</html>

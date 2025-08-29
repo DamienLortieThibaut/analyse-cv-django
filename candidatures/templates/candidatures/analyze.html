@@ -39,32 +39,89 @@
                 <div id="analysisResult" class="hidden mt-6">
                     <h3 class="text-center text-2xl font-bold text-slate-100 mb-6">Analyse terminée !</h3>
                     
+                    <!-- Section Profil & Score -->
                     <div class="grid md:grid-cols-2 gap-6 mb-6">
                         <div>
-                            <h5 class="text-lg font-semibold text-slate-200 mb-2">Profil détecté</h5>
-                            <p id="resultHeadline" class="text-violet-300 text-lg font-medium"></p>
+                            <h5 class="text-lg font-semibold text-slate-200 mb-2">Candidat identifié</h5>
+                            <p id="resultFullName" class="text-violet-300 text-xl font-bold mb-2"></p>
+                            <p id="resultHeadline" class="text-slate-300 text-lg"></p>
+                            <p id="resultSummary" class="text-slate-400 text-sm mt-2"></p>
                         </div>
                         <div>
                             <h5 class="text-lg font-semibold text-slate-200 mb-2">Score global</h5>
-                            <div class="flex items-center">
+                            <div class="flex items-center mb-4">
                                 <div class="flex-grow bg-slate-700 rounded-full h-6">
                                     <div id="resultScore" class="bg-emerald-500 h-6 rounded-full"></div>
                                 </div>
                                 <span id="resultScoreText" class="ml-3 text-lg font-bold text-slate-100"></span>
                             </div>
+                            
+                            <!-- Scores détaillés -->
+                            <div id="detailedScores" class="space-y-2">
+                                <!-- Rempli dynamiquement -->
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="grid md:grid-cols-2 gap-6 mb-6">
-                        <div>
-                            <h6 class="text-base font-semibold text-slate-200 mb-3">Compétences principales</h6>
-                            <div id="resultSkills" class="space-y-2"></div>
+                    <!-- Section Expérience -->
+                    <div class="bg-slate-800/50 rounded-lg p-4 mb-6">
+                        <h6 class="text-lg font-semibold text-slate-200 mb-3">Expérience professionnelle</h6>
+                        <p id="resultExperienceTotal" class="text-emerald-300 text-lg font-medium mb-3"></p>
+                        <div id="experienceList" class="space-y-3">
+                            <!-- Expériences détaillées remplies dynamiquement -->
                         </div>
-                        <div>
-                            <h6 class="text-base font-semibold text-slate-200 mb-2">Expérience</h6>
-                            <p id="resultExperience" class="text-slate-300 mb-4"></p>
-                            <h6 class="text-base font-semibold text-slate-200 mb-2">Formation</h6>
-                            <p id="resultEducation" class="text-slate-300"></p>
+                    </div>
+                    
+                    <!-- Section Compétences -->
+                    <div class="bg-slate-800/50 rounded-lg p-4 mb-6">
+                        <h6 class="text-lg font-semibold text-slate-200 mb-3">Compétences</h6>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <h7 class="text-sm font-medium text-slate-300 mb-2">Compétences principales</h7>
+                                <div id="skillsPrimary" class="flex flex-wrap gap-2"></div>
+                            </div>
+                            <div>
+                                <h7 class="text-sm font-medium text-slate-300 mb-2">Compétences secondaires</h7>
+                                <div id="skillsSecondary" class="flex flex-wrap gap-2"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Section Formation -->
+                    <div class="bg-slate-800/50 rounded-lg p-4 mb-6">
+                        <h6 class="text-lg font-semibold text-slate-200 mb-3">Formation</h6>
+                        <p id="resultEducationHighest" class="text-blue-300 text-lg font-medium mb-3"></p>
+                        <div id="educationList" class="space-y-3">
+                            <!-- Formations détaillées remplies dynamiquement -->
+                        </div>
+                    </div>
+                    
+                    <!-- Section Informations personnelles -->
+                    <div class="grid md:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-slate-800/50 rounded-lg p-4">
+                            <h7 class="text-sm font-medium text-slate-300 mb-2">Langues</h7>
+                            <div id="languagesList"></div>
+                        </div>
+                        <div class="bg-slate-800/50 rounded-lg p-4">
+                            <h7 class="text-sm font-medium text-slate-300 mb-2">Localisation</h7>
+                            <div id="locationsList"></div>
+                        </div>
+                        <div class="bg-slate-800/50 rounded-lg p-4">
+                            <h7 class="text-sm font-medium text-slate-300 mb-2">Centres d'intérêt</h7>
+                            <div id="interestsList"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Section Disponibilité & Salaire -->
+                    <div class="grid md:grid-cols-2 gap-4 mb-6">
+                        <div class="bg-slate-800/50 rounded-lg p-4">
+                            <h7 class="text-sm font-medium text-slate-300 mb-2">Disponibilité</h7>
+                            <p id="availability" class="text-slate-300"></p>
+                            <p id="workAuth" class="text-slate-400 text-sm mt-1"></p>
+                        </div>
+                        <div class="bg-slate-800/50 rounded-lg p-4">
+                            <h7 class="text-sm font-medium text-slate-300 mb-2">Prétentions salariales</h7>
+                            <p id="salaryExpectation" class="text-slate-300"></p>
                         </div>
                     </div>
                     
@@ -73,7 +130,7 @@
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
-                            Voir ma candidature
+                            Voir ma candidature complète
                         </a>
                     </div>
                 </div>
@@ -124,16 +181,47 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Start analysis
     setTimeout(() => {
+        console.log('Starting analysis...');
+        console.log('API URL:', "{% url 'candidatures:analyze-api' %}");
+        
+        // Get CSRF token from cookie
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        const csrftoken = getCookie('csrftoken') || '{{ csrf_token }}';
+        console.log('CSRF Token:', csrftoken);
+        
         fetch("{% url 'candidatures:analyze-api' %}", {
             method: 'POST',
             headers: {
-                'X-CSRFToken': '{{ csrf_token }}',
+                'X-CSRFToken': csrftoken,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({})
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(`HTTP ${response.status}: ${text}`);
+                });
+            }
+            return response.json();
+        })
         .then(data => {
+            console.log('Analysis result:', data);
             clearInterval(progressInterval);
             
             if (data.status === 'success') {
@@ -152,21 +240,141 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('progressSteps').classList.add('hidden');
                     document.getElementById('analysisResult').classList.remove('hidden');
                     
-                    // Fill results
-                    document.getElementById('resultHeadline').textContent = data.analysis.headline;
-                    document.getElementById('resultScore').style.width = data.analysis.fit_score + '%';
-                    document.getElementById('resultScoreText').textContent = data.analysis.fit_score + '/100';
+                    // Fill all results with enriched data
+                    const candidate = data.candidate;
+                    const experience = data.experience;
+                    const education = data.education;
+                    const skills = data.skills;
+                    const personal = data.personal;
+                    const salary = data.salary;
+                    const scoring = data.scoring;
                     
-                    // Skills
-                    const skillsDiv = document.getElementById('resultSkills');
-                    data.analysis.skills_primary.forEach(skill => {
-                        skillsDiv.innerHTML += `<span class="bg-violet-600 text-white px-3 py-1 rounded-full text-sm mr-2 mb-2 inline-block">${skill}</span>`;
+                    // Candidate info
+                    document.getElementById('resultFullName').textContent = candidate.full_name;
+                    document.getElementById('resultHeadline').textContent = candidate.headline;
+                    document.getElementById('resultSummary').textContent = candidate.summary;
+                    
+                    // Global score
+                    document.getElementById('resultScore').style.width = scoring.fit_score_overall + '%';
+                    document.getElementById('resultScoreText').textContent = Math.round(scoring.fit_score_overall) + '/100';
+                    
+                    // Detailed scores
+                    const detailedScoresDiv = document.getElementById('detailedScores');
+                    Object.entries(scoring.fit_scores_detailed).forEach(([key, score]) => {
+                        const scoreBar = document.createElement('div');
+                        scoreBar.className = 'flex items-center justify-between text-sm';
+                        scoreBar.innerHTML = `
+                            <span class="text-slate-300 capitalize">${key}</span>
+                            <div class="flex items-center ml-2">
+                                <div class="w-16 bg-slate-700 rounded-full h-2 mr-2">
+                                    <div class="bg-violet-400 h-2 rounded-full" style="width: ${score}%"></div>
+                                </div>
+                                <span class="text-slate-100 text-xs w-8">${Math.round(score)}</span>
+                            </div>
+                        `;
+                        detailedScoresDiv.appendChild(scoreBar);
                     });
                     
-                    document.getElementById('resultExperience').textContent = 
-                        data.analysis.years_experience + ' ans d\'expérience';
-                    document.getElementById('resultEducation').textContent = 
-                        data.analysis.education;
+                    // Experience
+                    document.getElementById('resultExperienceTotal').textContent = 
+                        `${experience.years_total} années d'expérience professionnelle`;
+                    
+                    const experienceListDiv = document.getElementById('experienceList');
+                    experience.experiences.forEach(exp => {
+                        const expDiv = document.createElement('div');
+                        expDiv.className = 'border-l-2 border-emerald-500 pl-4 py-2';
+                        expDiv.innerHTML = `
+                            <div class="flex justify-between items-start mb-1">
+                                <h8 class="font-medium text-slate-200">${exp.position} • ${exp.company}</h8>
+                                <span class="text-slate-400 text-xs">${exp.start_date} - ${exp.end_date}</span>
+                            </div>
+                            <p class="text-slate-400 text-sm mb-1">${exp.location || ''}</p>
+                            <p class="text-slate-300 text-sm">${exp.description || ''}</p>
+                        `;
+                        experienceListDiv.appendChild(expDiv);
+                    });
+                    
+                    // Skills
+                    const skillsPrimaryDiv = document.getElementById('skillsPrimary');
+                    skills.primary.forEach(skill => {
+                        const skillSpan = document.createElement('span');
+                        skillSpan.className = 'bg-violet-600 text-white px-3 py-1 rounded-full text-xs';
+                        skillSpan.textContent = skill;
+                        skillsPrimaryDiv.appendChild(skillSpan);
+                    });
+                    
+                    const skillsSecondaryDiv = document.getElementById('skillsSecondary');
+                    skills.secondary.forEach(skill => {
+                        const skillSpan = document.createElement('span');
+                        skillSpan.className = 'bg-slate-600 text-slate-200 px-2 py-1 rounded-full text-xs';
+                        skillSpan.textContent = skill;
+                        skillsSecondaryDiv.appendChild(skillSpan);
+                    });
+                    
+                    // Education
+                    document.getElementById('resultEducationHighest').textContent = education.highest_degree;
+                    
+                    const educationListDiv = document.getElementById('educationList');
+                    education.education_details.forEach(edu => {
+                        const eduDiv = document.createElement('div');
+                        eduDiv.className = 'border-l-2 border-blue-500 pl-4 py-2';
+                        eduDiv.innerHTML = `
+                            <div class="flex justify-between items-start mb-1">
+                                <h8 class="font-medium text-slate-200">${edu.degree} • ${edu.school}</h8>
+                                <span class="text-slate-400 text-xs">${edu.start_date} - ${edu.end_date}</span>
+                            </div>
+                            <p class="text-slate-400 text-sm mb-1">${edu.field || ''} • ${edu.location || ''}</p>
+                        `;
+                        educationListDiv.appendChild(eduDiv);
+                    });
+                    
+                    // Languages
+                    const languagesListDiv = document.getElementById('languagesList');
+                    data.languages.forEach(langObj => {
+                        Object.entries(langObj).forEach(([lang, level]) => {
+                            const langDiv = document.createElement('div');
+                            langDiv.className = 'flex justify-between text-sm mb-1';
+                            langDiv.innerHTML = `<span class="text-slate-300">${lang.toUpperCase()}</span><span class="text-slate-400">${level}</span>`;
+                            languagesListDiv.appendChild(langDiv);
+                        });
+                    });
+                    
+                    // Locations
+                    const locationsListDiv = document.getElementById('locationsList');
+                    personal.locations_preferred.forEach(location => {
+                        const locationSpan = document.createElement('span');
+                        locationSpan.className = 'bg-slate-700 text-slate-200 px-2 py-1 rounded text-xs block mb-1';
+                        locationSpan.textContent = location;
+                        locationsListDiv.appendChild(locationSpan);
+                    });
+                    
+                    // Interests
+                    const interestsListDiv = document.getElementById('interestsList');
+                    personal.interests.forEach(interest => {
+                        const interestSpan = document.createElement('span');
+                        interestSpan.className = 'text-slate-300 text-sm block mb-1';
+                        interestSpan.textContent = interest;
+                        interestsListDiv.appendChild(interestSpan);
+                    });
+                    
+                    // Availability
+                    document.getElementById('availability').textContent = 
+                        personal.availability_date ? `Disponible le ${personal.availability_date}` : 'Disponibilité à définir';
+                    document.getElementById('workAuth').textContent = 
+                        `Autorisation de travail: ${personal.work_authorization}`;
+                    
+                    // Salary
+                    let salaryText = 'Non spécifié';
+                    if (salary.expectation_min || salary.expectation_max) {
+                        if (salary.expectation_min && salary.expectation_max) {
+                            salaryText = `${salary.expectation_min}€ - ${salary.expectation_max}€`;
+                        } else if (salary.expectation_min) {
+                            salaryText = `À partir de ${salary.expectation_min}€`;
+                        } else {
+                            salaryText = `Jusqu'à ${salary.expectation_max}€`;
+                        }
+                    }
+                    document.getElementById('salaryExpectation').textContent = salaryText;
                     
                     document.getElementById('successLink').href = data.redirect_url;
                 }, 1000);
