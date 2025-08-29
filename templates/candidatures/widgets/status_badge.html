@@ -1,0 +1,11 @@
+{% if statut == 'soumise' %}
+  <span class="inline-flex items-center rounded-full px-3 py-1 text-xs bg-sky-950 text-sky-300">Soumise</span>
+{% elif statut == 'en_revue' %}
+  <span class="inline-flex items-center rounded-full px-3 py-1 text-xs bg-amber-950 text-amber-300">En revue</span>
+{% elif statut == 'preselection' %}
+  <span class="inline-flex items-center rounded-full px-3 py-1 text-xs bg-emerald-950 text-emerald-300">Présélection</span>
+{% elif statut == 'rejetee' %}
+  <span class="inline-flex items-center rounded-full px-3 py-1 text-xs bg-rose-950 text-rose-300">Rejetée</span>
+{% elif statut == 'embauchee' %}
+  <span class="inline-flex items-center rounded-full px-3 py-1 text-xs bg-cyan-950 text-cyan-300">Embauché(e)</span>
+{% endif %}
