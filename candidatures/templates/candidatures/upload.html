@@ -1,12 +1,12 @@
 {% extends 'candidatures/base.html' %}
 
-{% block title %}Déposer votre candidature{% endblock %}
+{% block candidature_title %}Déposer votre candidature{% endblock %}
 
-{% block content %}
+{% block candidature_content %}
 <div class="flex justify-center">
     <div class="w-full max-w-2xl">
-        <div class="card p-6">
-            <h2 class="text-center text-3xl font-bold text-gray-900 mb-6">
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-lg">
+            <h2 class="text-center text-3xl font-bold text-slate-100 mb-6">
                 <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                 </svg>
@@ -17,11 +17,11 @@
                     {% csrf_token %}
                     
                     <div class="mb-4">
-                        <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-slate-300 mb-2">
                             {{ form.email.label }} *
                         </label>
                         <input type="email" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}" 
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                               class="w-full px-3 py-2 border border-slate-700 bg-slate-800 text-slate-100 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500" 
                                placeholder="votre.email@example.com" required>
                         {% if form.email.errors %}
                             <p class="text-red-600 text-sm mt-1">{{ form.email.errors }}</p>
@@ -29,16 +29,16 @@
                     </div>
                     
                     <div class="mb-4">
-                        <label for="{{ form.cv_file.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
-                            <svg class="w-5 h-5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <label for="{{ form.cv_file.id_for_label }}" class="block text-sm font-medium text-slate-300 mb-2">
+                            <svg class="w-5 h-5 inline mr-1 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>
                             {{ form.cv_file.label }} *
                         </label>
                         <input type="file" name="{{ form.cv_file.name }}" id="{{ form.cv_file.id_for_label }}" 
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                               class="w-full px-3 py-2 border border-slate-700 bg-slate-800 text-slate-100 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500" 
                                accept=".pdf" required>
-                        <p class="text-gray-500 text-sm mt-1">{{ form.cv_file.help_text }}</p>
+                        <p class="text-slate-400 text-sm mt-1">{{ form.cv_file.help_text }}</p>
                         {% if form.cv_file.errors %}
                             <p class="text-red-600 text-sm mt-1">{{ form.cv_file.errors }}</p>
                         {% endif %}
@@ -46,7 +46,7 @@
                     
                     
                     <div class="text-center">
-                        <button type="submit" class="btn btn-primary text-lg px-8 py-3">
+                        <button type="submit" class="bg-violet-600 hover:bg-violet-700 text-white font-medium py-3 px-8 rounded-lg text-lg transition-colors duration-200 shadow-lg">
                             <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                             </svg>
@@ -57,17 +57,7 @@
             </div>
         </div>
         
-        <div class="text-center mt-6 text-white">
-            <p class="text-lg">Votre nom, prénom et toutes vos données seront extraites automatiquement de votre CV par notre IA</p>
-            <p class="text-sm opacity-75">Nous respectons votre vie privée et vos données personnelles</p>
-            
-            <div class="mt-4 p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded-lg">
-                <p class="font-medium">⚠️ PDF scanné non supporté ?</p>
-                <p class="text-sm mb-2">Si votre PDF ne contient pas de texte extractible :</p>
-                <a href="{% url 'candidatures:test-text' %}" class="btn btn-outline text-yellow-700 border-yellow-400 hover:bg-yellow-50">
-                    Utiliser le formulaire texte
-                </a>
-            </div>
+        <div class="text-center mt-6 text-slate-300">
         </div>
     </div>
 </div>

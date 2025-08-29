@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+from dotenv import load_dotenv
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -168,6 +170,7 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "http://127.0.0.1:8000",
+    
 ]
 
 # Default primary key field type
@@ -190,8 +193,8 @@ MINIO_SECRET_KEY = os.getenv('MINIO_SECRET_KEY', 'minioadmin123')
 MINIO_SECURE = os.getenv('MINIO_SECURE', 'False').lower() == 'true'
 MINIO_BUCKET_NAME = os.getenv('MINIO_BUCKET_NAME', 'cv-uploads')
 
-# Use MinIO for file storage
-DEFAULT_FILE_STORAGE = 'minio_storage.storage.MinioMediaStorage'
+# Use local file storage for development (comment to use MinIO)
+# DEFAULT_FILE_STORAGE = 'minio_storage.storage.MinioMediaStorage'
 MINIO_STORAGE_ENDPOINT = MINIO_ENDPOINT
 MINIO_STORAGE_ACCESS_KEY = MINIO_ACCESS_KEY
 MINIO_STORAGE_SECRET_KEY = MINIO_SECRET_KEY

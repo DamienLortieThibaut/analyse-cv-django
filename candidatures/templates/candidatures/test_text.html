@@ -1,12 +1,12 @@
 {% extends 'candidatures/base.html' %}
 
-{% block title %}Test Analyse Texte{% endblock %}
+{% block candidature_title %}Test Analyse Texte{% endblock %}
 
-{% block content %}
+{% block candidature_content %}
 <div class="flex justify-center">
     <div class="w-full max-w-2xl">
-        <div class="card p-6">
-            <h2 class="text-center text-3xl font-bold text-gray-900 mb-6">
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-lg">
+            <h2 class="text-center text-3xl font-bold text-slate-100 mb-6">
                 Test Analyse avec Texte
             </h2>
             
@@ -14,20 +14,20 @@
                 {% csrf_token %}
                 
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                    <label class="block text-sm font-medium text-slate-300 mb-2">
                         Email *
                     </label>
                     <input type="email" name="email" required
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                           class="w-full px-3 py-2 border border-slate-700 bg-slate-800 text-slate-100 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500" 
                            placeholder="votre.email@example.com">
                 </div>
                 
                 <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                    <label class="block text-sm font-medium text-slate-300 mb-2">
                         Contenu de votre CV *
                     </label>
                     <textarea name="cv_text" required rows="15"
-                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                              class="w-full px-3 py-2 border border-slate-700 bg-slate-800 text-slate-100 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500" 
                               placeholder="Copiez-collez le contenu de votre CV ici...
 
 Exemple:
@@ -53,16 +53,14 @@ LANGUES
                 </div>
                 
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary text-lg px-8 py-3">
+                    <button type="submit" class="bg-violet-600 hover:bg-violet-700 text-white font-medium py-3 px-8 rounded-lg text-lg transition-colors duration-200 shadow-lg">
                         Analyser avec Claude
                     </button>
                 </div>
             </form>
         </div>
         
-        <div class="text-center mt-6 text-white">
-            <p class="text-lg">Votre nom, prénom et toutes vos données seront extraites automatiquement de votre texte par Claude</p>
-            <p class="text-sm opacity-75">Mode test - Analyse directe du texte avec Claude</p>
+        <div class="text-center mt-6 text-slate-300">
         </div>
     </div>
 </div>
