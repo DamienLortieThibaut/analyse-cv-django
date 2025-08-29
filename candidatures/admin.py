@@ -10,14 +10,22 @@ class CandidatureAdmin(admin.ModelAdmin):
     readonly_fields = ('id', 'created_at', 'updated_at', 'analyzed_at')
     
     fieldsets = (
-        ('Informations personnelles', {
-            'fields': ('first_name', 'last_name', 'email', 'phone', 'resume')
+        ('Documents & Identité', {
+            'fields': ('first_name', 'last_name', 'email', 'phone', 'resume', 'cv_url')
         }),
         ('Profil professionnel', {
-            'fields': ('headline', 'years_experience', 'education_highest')
+            'fields': ('headline', 'summary', 'years_experience', 'education_highest')
         }),
-        ('Compétences', {
-            'fields': ('skills_primary', 'skills_secondary', 'languages'),
+        ('Expériences professionnelles', {
+            'fields': ('experiences',),
+            'classes': ('collapse',)
+        }),
+        ('Formation & Éducation', {
+            'fields': ('education',),
+            'classes': ('collapse',)
+        }),
+        ('Compétences & Intérêts', {
+            'fields': ('skills_primary', 'skills_secondary', 'languages', 'interests'),
             'classes': ('collapse',)
         }),
         ('Préférences', {

@@ -3,36 +3,18 @@ from django.core.validators import FileExtensionValidator
 
 
 class CandidatureUploadForm(forms.Form):
-    first_name = forms.CharField(
-        max_length=100,
-        label="Prénom",
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Jean'
-        })
-    )
-    
-    last_name = forms.CharField(
-        max_length=100,
-        label="Nom",
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Dupont'
-        })
-    )
-    
     email = forms.EmailField(
         label="Email",
         widget=forms.EmailInput(attrs={
             'class': 'form-control',
-            'placeholder': 'jean.dupont@example.com'
+            'placeholder': 'votre.email@example.com'
         })
     )
     
     cv_file = forms.FileField(
         label="CV (PDF)",
         validators=[FileExtensionValidator(allowed_extensions=['pdf'])],
-        help_text="Format PDF uniquement, max 10 MB",
+        help_text="Format PDF uniquement, max 10 MB - Votre nom et prénom seront extraits automatiquement du CV",
         widget=forms.FileInput(attrs={
             'class': 'form-control',
             'accept': '.pdf'

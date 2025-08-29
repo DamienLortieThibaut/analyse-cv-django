@@ -40,8 +40,6 @@ class CandidatureUploadView(View):
                 
                 # Store form data in session for analysis
                 request.session['pending_candidature'] = {
-                    'first_name': form.cleaned_data['first_name'],
-                    'last_name': form.cleaned_data['last_name'],
                     'email': form.cleaned_data['email'],
                     'cv_file_path': saved_path,
                     'cv_file_url': file_url,
@@ -71,22 +69,18 @@ class CandidatureTestTextView(View):
                 del request.session['pending_candidature']
             
             # Récupérer les données du formulaire
-            first_name = request.POST.get('first_name')
-            last_name = request.POST.get('last_name')
             email = request.POST.get('email')
             cv_text = request.POST.get('cv_text')
             
-            if not all([first_name, last_name, email, cv_text]):
-                messages.error(request, "Tous les champs sont obligatoires")
+            if not all([email, cv_text]):
+                messages.error(request, "L'email et le CV sont obligatoires")
                 return render(request, self.template_name)
             
-            print(f"Text form - données reçues: first_name={first_name}, last_name={last_name}, email={email}")
+            print(f"Text form - données reçues: email={email}")
             print(f"Text form - longueur cv_text: {len(cv_text)} caractères")
             
             # Store form data in session for analysis
             session_data = {
-                'first_name': first_name,
-                'last_name': last_name,
                 'email': email,
                 'cv_text': cv_text,  # Texte direct au lieu d'un fichier
                 'cv_file_url': f'#text-cv-{uuid.uuid4()}',
@@ -172,9 +166,7 @@ class CandidatureAnalyzeAPIView(View):
                     pending_data['cv_file_url']
                 )
                 
-                # Ajouter les données du formulaire
-                candidature_data['first_name'] = pending_data['first_name']
-                candidature_data['last_name'] = pending_data['last_name']
+                # Ajouter les données du formulaire (les noms viennent maintenant de l'analyse Claude)
                 candidature_data['email'] = pending_data['email']
                 candidature_data['phone'] = ''
                 candidature_data['position_applied'] = ''

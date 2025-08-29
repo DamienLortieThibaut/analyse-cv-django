@@ -37,6 +37,8 @@ except ImportError:
 class CVAnalysisResponse(BaseModel):
     """Modèle Pydantic pour valider la réponse d'analyse de CV"""
     
+    first_name: str = Field(..., max_length=100, description="Prénom du candidat")
+    last_name: str = Field(..., max_length=100, description="Nom du candidat") 
     headline: str = Field(..., max_length=255, description="Titre accrocheur du profil")
     summary: str = Field(..., description="Résumé complet du CV")
     years_experience: float = Field(..., ge=0, description="Années d'expérience")
@@ -156,8 +158,8 @@ CONTRAINTES IMPORTANTES:
 - work_authorization: 'EU', 'Visa', ou 'No'
 - availability_date format: 'YYYY-MM-DD' ou null
 - languages format: [{{"code_langue": "niveau"}}] ex: [{{"fr": "C2"}}, {{"en": "B2"}}]
-- experiences format: [{{"company": "nom", "position": "poste", "duration": "période", "description": "description courte"}}]
-- education format: [{{"school": "école", "degree": "diplôme", "duration": "période", "field": "domaine"}}]
+- experiences format: [{{"start_date": "YYYY-MM", "end_date": "YYYY-MM", "company": "nom", "position": "poste", "location": "ville", "description": "description courte"}}]
+- education format: [{{"start_date": "YYYY-MM", "end_date": "YYYY-MM", "school": "école", "degree": "diplôme", "field": "domaine", "location": "ville"}}]
 
 CRITÈRES D'ÉVALUATION pour fit_scores:
 - skills: Pertinence et niveau des compétences techniques
@@ -171,18 +173,20 @@ CV À ANALYSER:
 
 JSON ATTENDU:
 {{
+  "first_name": "string (prénom du candidat)",
+  "last_name": "string (nom de famille du candidat)",
   "headline": "string (titre professionnel accrocheur)",
   "summary": "string (résumé en 2-3 phrases du profil et parcours du candidat)",
   "years_experience": float,
   "experiences": [
-    {{"company": "TechCorp", "position": "Senior Developer", "duration": "2020-2024", "description": "Développement d'applications web"}}
+    {{"start_date": "2020-01", "end_date": "2024-03", "company": "TechCorp", "position": "Senior Developer", "location": "Paris", "description": "Développement d'applications web"}}
   ],
   "skills_primary": ["skill1", "skill2", "skill3"],
   "skills_secondary": ["skill4", "skill5"],
   "languages": [{{"fr": "C2"}}, {{"en": "B2"}}],
   "education_highest": "string (ex: Master Informatique)",
   "education": [
-    {{"school": "Université Paris", "degree": "Master Informatique", "duration": "2016-2018", "field": "Intelligence Artificielle"}}
+    {{"start_date": "2016-09", "end_date": "2018-06", "school": "Université Paris", "degree": "Master Informatique", "field": "Intelligence Artificielle", "location": "Paris"}}
   ],
   "interests": ["sport", "lecture", "voyages"],
   "locations_preferred": ["Paris", "Remote"],
@@ -221,8 +225,8 @@ CONTRAINTES IMPORTANTES:
 - work_authorization: 'EU', 'Visa', ou 'No'
 - availability_date format: 'YYYY-MM-DD' ou null
 - languages format: [{{"code_langue": "niveau"}}] ex: [{{"fr": "C2"}}, {{"en": "B2"}}]
-- experiences format: [{{"company": "nom", "position": "poste", "duration": "période", "description": "description courte"}}]
-- education format: [{{"school": "école", "degree": "diplôme", "duration": "période", "field": "domaine"}}]
+- experiences format: [{{"start_date": "YYYY-MM", "end_date": "YYYY-MM", "company": "nom", "position": "poste", "location": "ville", "description": "description courte"}}]
+- education format: [{{"start_date": "YYYY-MM", "end_date": "YYYY-MM", "school": "école", "degree": "diplôme", "field": "domaine", "location": "ville"}}]
 
 CRITÈRES D'ÉVALUATION pour fit_scores:
 - skills: Pertinence et niveau des compétences techniques
@@ -233,18 +237,20 @@ CRITÈRES D'ÉVALUATION pour fit_scores:
 
 JSON ATTENDU:
 {{
+  "first_name": "string (prénom du candidat)",
+  "last_name": "string (nom de famille du candidat)",
   "headline": "string (titre professionnel accrocheur)",
   "summary": "string (résumé en 2-3 phrases du profil et parcours du candidat)",
   "years_experience": float,
   "experiences": [
-    {{"company": "TechCorp", "position": "Senior Developer", "duration": "2020-2024", "description": "Développement d'applications web"}}
+    {{"start_date": "2020-01", "end_date": "2024-03", "company": "TechCorp", "position": "Senior Developer", "location": "Paris", "description": "Développement d'applications web"}}
   ],
   "skills_primary": ["skill1", "skill2", "skill3"],
   "skills_secondary": ["skill4", "skill5"],
   "languages": [{{"fr": "C2"}}, {{"en": "B2"}}],
   "education_highest": "string (ex: Master Informatique)",
   "education": [
-    {{"school": "Université Paris", "degree": "Master Informatique", "duration": "2016-2018", "field": "Intelligence Artificielle"}}
+    {{"start_date": "2016-09", "end_date": "2018-06", "school": "Université Paris", "degree": "Master Informatique", "field": "Intelligence Artificielle", "location": "Paris"}}
   ],
   "interests": ["sport", "lecture", "voyages"],
   "locations_preferred": ["Paris", "Remote"],
@@ -439,20 +445,37 @@ JSON ATTENDU:
         
         overall_score = min(base_score + exp_bonus + skills_bonus, 95.0)
         
+        # Essayer d'extraire le nom depuis le CV texte
+        first_name = "John"
+        last_name = "Doe"
+        
+        # Analyser les premières lignes pour détecter le nom
+        lines = cv_text.split('\n')[:5]  # Les 5 premières lignes
+        for line in lines:
+            line = line.strip()
+            if line and not line.lower().startswith(('cv', 'curriculum', 'resume', 'email', 'tel')):
+                words = line.split()
+                if len(words) >= 2 and all(w.replace('-', '').replace("'", '').isalpha() for w in words[:2]):
+                    first_name = words[0].capitalize()
+                    last_name = words[1].capitalize()
+                    break
+        
         return CVAnalysisResponse(
+            first_name=first_name,
+            last_name=last_name,
             headline=headline,
             summary=f"Professionnel avec {years_exp} ans d'expérience, spécialisé en développement logiciel. Expertise en {', '.join(skills_primary[:3]) if skills_primary else 'technologies modernes'}.",
             years_experience=years_exp,
             experiences=[
-                {"company": "TechCorp", "position": "Développeur Senior", "duration": "2021-2024", "description": "Développement d'applications web"},
-                {"company": "StartupXYZ", "position": "Développeur", "duration": "2019-2021", "description": "Développement full-stack"}
+                {"start_date": "2021-01", "end_date": "2024-03", "company": "TechCorp", "position": "Développeur Senior", "location": "Paris", "description": "Développement d'applications web"},
+                {"start_date": "2019-06", "end_date": "2021-01", "company": "StartupXYZ", "position": "Développeur", "location": "Lyon", "description": "Développement full-stack"}
             ],
             skills_primary=skills_primary,
             skills_secondary=skills_secondary,
             languages=[{"fr": "C2"}, {"en": "B2"}],
             education_highest=education,
             education=[
-                {"school": "Université", "degree": education, "duration": "2016-2018", "field": "Informatique"}
+                {"start_date": "2016-09", "end_date": "2018-06", "school": "Université Paris", "degree": education, "field": "Informatique", "location": "Paris"}
             ],
             interests=["Technologie", "Innovation", "Open Source"],
             locations_preferred=["Paris", "Lyon", "Remote"],
@@ -548,6 +571,8 @@ def create_candidature_from_analysis(analysis: CVAnalysisResponse, model_version
     data = {
         'resume': resume_url,
         'cv_url': resume_url,  # URL du CV original
+        'first_name': analysis.first_name,
+        'last_name': analysis.last_name,
         'headline': analysis.headline,
         'summary': analysis.summary,
         'years_experience': Decimal(str(analysis.years_experience)),
