@@ -1,6 +1,31 @@
 version: '3.8'
 
 services:
+  web:
+    build:
+      context: .
+      target: ${BUILD_TARGET:-development}
+    container_name: cv-django-app
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - media_data:/app/media
+    environment:
+      - DEBUG=${DEBUG:-True}
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin123
+      - MINIO_SECURE=False
+      - MINIO_BUCKET_NAME=cv-uploads
+    depends_on:
+      - minio
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    networks:
+      - cv-network
+
   minio:
     image: minio/minio:latest
     container_name: cv-minio
@@ -19,9 +44,12 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
+    networks:
+      - cv-network
 
   createbuckets:
     image: minio/mc:latest
+    container_name: cv-minio-setup
     depends_on:
       - minio
     entrypoint: >
@@ -31,7 +59,15 @@ services:
       /usr/bin/mc anonymous set download myminio/cv-uploads;
       exit 0;
       "
+    networks:
+      - cv-network
+
+networks:
+  cv-network:
+    driver: bridge
 
 volumes:
   minio_data:
+    driver: local
+  media_data:
     driver: local
