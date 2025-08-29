@@ -8,7 +8,30 @@ Application Django pour l'analyse de CV avec intégration MinIO et API Anthropic
 - Docker et Docker Compose installés
 - Git (pour cloner le projet)
 
-### Installation et démarrage
+### Démarrage automatique (recommandé)
+
+**Linux/macOS** :
+```bash
+./start.sh
+```
+
+**Windows** :
+```cmd
+start.bat
+```
+ou
+```powershell
+.\start.ps1
+```
+
+Ces scripts effectuent automatiquement :
+- Vérification des prérequis (Docker, Docker Compose)
+- Création du fichier `.env` si nécessaire
+- Construction des images Docker
+- Démarrage des services
+- Affichage des URLs d'accès
+
+### Démarrage manuel
 
 1. **Configuration initiale** :
    ```bash
@@ -71,7 +94,11 @@ analyse-cv-django/
 ├── requirements.txt           # Dépendances de base
 ├── requirements-dev.txt       # Dépendances de développement
 ├── requirements-prod.txt      # Dépendances de production
-└── Makefile                   # Commandes
+├── Makefile                   # Commandes
+├── start.sh                   # Script de démarrage Linux/macOS
+├── start.bat                  # Script de démarrage Windows (Batch)
+├── start.ps1                  # Script de démarrage Windows (PowerShell)
+└── env.example                # Template de configuration
 ```
 
 ## Configuration
