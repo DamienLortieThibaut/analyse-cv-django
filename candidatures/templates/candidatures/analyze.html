@@ -1,0 +1,187 @@
+{% extends 'candidatures/base.html' %}
+
+{% block candidature_title %}Analyse en cours{% endblock %}
+
+{% block candidature_content %}
+<div class="flex justify-center">
+    <div class="w-full max-w-4xl">
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-lg">
+                <h2 class="text-center text-2xl font-bold text-slate-100 mb-4">
+                    <svg class="w-8 h-8 inline mb-1 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                    Analyse de votre CV en cours
+                </h2>
+                
+                <div id="analysisStatus" class="text-center">
+                    <div class="flex justify-center mb-4">
+                        <svg class="animate-spin h-12 w-12 text-violet-400" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="m15.84 8.46a4 4 0 1 1-7.68 0"></path>
+                        </svg>
+                    </div>
+                    <h4 class="text-xl font-semibold text-slate-100 mb-2">Traitement en cours...</h4>
+                    <p class="text-slate-400">Notre IA analyse votre CV et extrait les informations pertinentes</p>
+                </div>
+                
+                <div id="progressSteps" class="mt-6">
+                    <div class="flex justify-between mb-4 space-x-2">
+                        <span id="step1" class="px-3 py-1 rounded-full text-sm bg-violet-600 text-white">1. Upload terminé</span>
+                        <span id="step2" class="px-3 py-1 rounded-full text-sm bg-slate-600 text-slate-300">2. Extraction du texte</span>
+                        <span id="step3" class="px-3 py-1 rounded-full text-sm bg-slate-600 text-slate-300">3. Analyse IA</span>
+                        <span id="step4" class="px-3 py-1 rounded-full text-sm bg-slate-600 text-slate-300">4. Scoring</span>
+                    </div>
+                    <div class="w-full bg-slate-700 rounded-full h-6">
+                        <div id="progressBar" class="bg-violet-600 h-6 rounded-full text-white text-center text-sm leading-6" style="width: 25%">25%</div>
+                    </div>
+                </div>
+                
+                <div id="analysisResult" class="hidden mt-6">
+                    <h3 class="text-center text-2xl font-bold text-slate-100 mb-6">Analyse terminée !</h3>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h5 class="text-lg font-semibold text-slate-200 mb-2">Profil détecté</h5>
+                            <p id="resultHeadline" class="text-violet-300 text-lg font-medium"></p>
+                        </div>
+                        <div>
+                            <h5 class="text-lg font-semibold text-slate-200 mb-2">Score global</h5>
+                            <div class="flex items-center">
+                                <div class="flex-grow bg-slate-700 rounded-full h-6">
+                                    <div id="resultScore" class="bg-emerald-500 h-6 rounded-full"></div>
+                                </div>
+                                <span id="resultScoreText" class="ml-3 text-lg font-bold text-slate-100"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h6 class="text-base font-semibold text-slate-200 mb-3">Compétences principales</h6>
+                            <div id="resultSkills" class="space-y-2"></div>
+                        </div>
+                        <div>
+                            <h6 class="text-base font-semibold text-slate-200 mb-2">Expérience</h6>
+                            <p id="resultExperience" class="text-slate-300 mb-4"></p>
+                            <h6 class="text-base font-semibold text-slate-200 mb-2">Formation</h6>
+                            <p id="resultEducation" class="text-slate-300"></p>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-6">
+                        <a id="successLink" href="#" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-8 rounded-lg text-lg transition-colors duration-200 shadow-lg inline-flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Voir ma candidature
+                        </a>
+                    </div>
+                </div>
+                
+                <div id="analysisError" class="hidden mt-6 p-4 bg-red-900/20 border border-red-700 rounded-lg">
+                    <h5 class="text-lg font-semibold text-red-300 mb-2 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5C2.962 18.333 3.924 20 5.464 20z"></path>
+                        </svg>
+                        Erreur lors de l'analyse
+                    </h5>
+                    <p id="errorMessage" class="text-red-200 mb-4"></p>
+                    <a href="{% url 'candidatures:upload' %}" class="bg-violet-600 hover:bg-violet-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 inline-flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+                        </svg>
+                        Réessayer
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let progress = 25;
+    const progressBar = document.getElementById('progressBar');
+    const steps = ['step1', 'step2', 'step3', 'step4'];
+    let currentStep = 0;
+    
+    // Simulate progress
+    const progressInterval = setInterval(() => {
+        if (progress < 50) {
+            progress += 5;
+            progressBar.style.width = progress + '%';
+            progressBar.textContent = progress + '%';
+            
+            if (progress >= 35 && currentStep === 0) {
+                currentStep = 1;
+                document.getElementById('step2').classList.remove('bg-slate-600', 'text-slate-300');
+                document.getElementById('step2').classList.add('bg-violet-600', 'text-white');
+            }
+        }
+    }, 300);
+    
+    // Start analysis
+    setTimeout(() => {
+        fetch("{% url 'candidatures:analyze-api' %}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({})
+        })
+        .then(response => response.json())
+        .then(data => {
+            clearInterval(progressInterval);
+            
+            if (data.status === 'success') {
+                // Update progress to 100%
+                progressBar.style.width = '100%';
+                progressBar.textContent = '100%';
+                steps.forEach(stepId => {
+                    const step = document.getElementById(stepId);
+                    step.classList.remove('bg-slate-600', 'text-slate-300');
+                    step.classList.add('bg-violet-600', 'text-white');
+                });
+                
+                // Show results
+                setTimeout(() => {
+                    document.getElementById('analysisStatus').classList.add('hidden');
+                    document.getElementById('progressSteps').classList.add('hidden');
+                    document.getElementById('analysisResult').classList.remove('hidden');
+                    
+                    // Fill results
+                    document.getElementById('resultHeadline').textContent = data.analysis.headline;
+                    document.getElementById('resultScore').style.width = data.analysis.fit_score + '%';
+                    document.getElementById('resultScoreText').textContent = data.analysis.fit_score + '/100';
+                    
+                    // Skills
+                    const skillsDiv = document.getElementById('resultSkills');
+                    data.analysis.skills_primary.forEach(skill => {
+                        skillsDiv.innerHTML += `<span class="bg-violet-600 text-white px-3 py-1 rounded-full text-sm mr-2 mb-2 inline-block">${skill}</span>`;
+                    });
+                    
+                    document.getElementById('resultExperience').textContent = 
+                        data.analysis.years_experience + ' ans d\'expérience';
+                    document.getElementById('resultEducation').textContent = 
+                        data.analysis.education;
+                    
+                    document.getElementById('successLink').href = data.redirect_url;
+                }, 1000);
+            } else {
+                throw new Error(data.message || 'Erreur inconnue');
+            }
+        })
+        .catch(error => {
+            clearInterval(progressInterval);
+            document.getElementById('analysisStatus').classList.add('hidden');
+            document.getElementById('progressSteps').classList.add('hidden');
+            document.getElementById('analysisError').classList.remove('hidden');
+            document.getElementById('errorMessage').textContent = error.message;
+        });
+    }, 1000);
+});
+</script>
+{% endblock %}

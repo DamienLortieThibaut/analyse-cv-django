@@ -1,0 +1,7 @@
+Django==5.2.5
+anthropic==0.40.0
+pdfminer.six==20250506
+pydantic==2.9.2
+python-dotenv==1.0.1
+django-minio-storage==0.5.7
+minio==7.2.12
