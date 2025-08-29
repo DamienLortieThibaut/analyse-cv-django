@@ -1,11 +1,19 @@
-{% if statut == 'soumise' %}
+{% if statut == 'submitted' %}
   <span class="inline-flex items-center rounded-full px-3 py-1 text-xs bg-sky-950 text-sky-300">Soumise</span>
-{% elif statut == 'en_revue' %}
-  <span class="inline-flex items-center rounded-full px-3 py-1 text-xs bg-amber-950 text-amber-300">En revue</span>
-{% elif statut == 'preselection' %}
-  <span class="inline-flex items-center rounded-full px-3 py-1 text-xs bg-emerald-950 text-emerald-300">Présélection</span>
-{% elif statut == 'rejetee' %}
-  <span class="inline-flex items-center rounded-full px-3 py-1 text-xs bg-rose-950 text-rose-300">Rejetée</span>
-{% elif statut == 'embauchee' %}
-  <span class="inline-flex items-center rounded-full px-3 py-1 text-xs bg-cyan-950 text-cyan-300">Embauché(e)</span>
+{% elif statut == 'screening' %}
+  <span class="inline-flex items-center rounded-full px-3 py-1 text-xs bg-amber-950 text-amber-300">En sélection</span>
+{% elif statut == 'manager_review' %}
+  <span class="inline-flex items-center rounded-full px-3 py-1 text-xs bg-indigo-950 text-indigo-300">Revue managériale</span>
+{% elif statut == 'tech_test' %}
+  <span class="inline-flex items-center rounded-full px-3 py-1 text-xs bg-purple-950 text-purple-300">Test technique</span>
+{% elif statut == 'interview_1' %}
+  <span class="inline-flex items-center rounded-full px-3 py-1 text-xs bg-emerald-950 text-emerald-300">Premier entretien</span>
+{% elif statut == 'offer' %}
+  <span class="inline-flex items-center rounded-full px-3 py-1 text-xs bg-teal-950 text-teal-300">Offre émise</span>
+{% elif statut == 'hired' %}
+  <span class="inline-flex items-center rounded-full px-3 py-1 text-xs bg-green-950 text-green-300">Embauché</span>
+{% elif statut == 'rejected' %}
+  <span class="inline-flex items-center rounded-full px-3 py-1 text-xs bg-rose-950 text-rose-300">Rejeté</span>
+{% else %}
+  <span class="inline-flex items-center rounded-full px-3 py-1 text-xs bg-slate-800 text-slate-400">{{ statut|default:"Inconnu" }}</span>
 {% endif %}

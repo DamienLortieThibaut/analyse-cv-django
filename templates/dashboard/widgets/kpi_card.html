@@ -1,7 +1,4 @@
 <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-4 shadow-lg">
   <p class="text-xs text-slate-400">{{ label }}</p>
   <p class="text-3xl font-extrabold mt-1">{{ value }}</p>
-  <p class="text-xs {% if change_positive %}text-emerald-400{% else %}text-rose-300{% endif %} mt-1">
-    {% if change_positive %}+{% endif %}{{ change }}
-  </p>
 </div>

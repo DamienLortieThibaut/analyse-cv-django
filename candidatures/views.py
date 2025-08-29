@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.views import View
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView
 from django.http import JsonResponse
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.utils import timezone
+from django.db import models
 from .forms import CandidatureUploadForm
 from .models import Candidature
 from .services import CVAnalysisService, create_candidature_from_analysis
@@ -258,3 +259,73 @@ class CandidatureSuccessView(TemplateView):
             context['candidature'] = None
             
         return context
+
+
+class CandidatureListView(ListView):
+    model = Candidature
+    template_name = 'candidatures/list.html'
+    context_object_name = 'candidatures'
+    paginate_by = 30
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        
+        # Filtrer par id utilisateur depuis l'URL si présent
+        user_id_filter = self.kwargs.get('id')
+        if user_id_filter:
+            try:
+                from django.contrib.auth import get_user_model
+                User = get_user_model()
+                user = User.objects.get(id=user_id_filter)
+                qs = qs.filter(email=user.email)
+            except (User.DoesNotExist, ValueError):
+                # Si l'utilisateur n'existe pas, retourner queryset vide
+                qs = qs.none()
+
+        # Filtres basiques (statut, score, expérience, recherche)
+        status = self.request.GET.get('status')
+        score_min = self.request.GET.get('score_min')
+        experience = self.request.GET.get('experience')
+        search = self.request.GET.get('search')
+
+        if status:
+            qs = qs.filter(status=status)
+        if score_min:
+            try:
+                qs = qs.filter(fit_score_overall__gte=float(score_min))
+            except ValueError:
+                pass
+        if experience:
+            if experience == '0-2':
+                qs = qs.filter(years_experience__gte=0, years_experience__lte=2)
+            elif experience == '3-5':
+                qs = qs.filter(years_experience__gte=3, years_experience__lte=5)
+            elif experience == '6-10':
+                qs = qs.filter(years_experience__gte=6, years_experience__lte=10)
+            elif experience == '10+':
+                qs = qs.filter(years_experience__gte=10)
+        if search:
+            qs = qs.filter(
+                models.Q(first_name__icontains=search) |
+                models.Q(last_name__icontains=search) |
+                models.Q(email__icontains=search) |
+                models.Q(headline__icontains=search)
+            )
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Ajouter l'id utilisateur filtré au contexte pour l'affichage
+        user_id_filter = self.kwargs.get('id')
+        if user_id_filter:
+            try:
+                from django.contrib.auth import get_user_model
+                User = get_user_model()
+                user = User.objects.get(id=user_id_filter)
+                context['user_filter'] = user
+                context['id_filter'] = user_id_filter
+            except User.DoesNotExist:
+                context['user_filter'] = None
+                context['id_filter'] = user_id_filter
+        return context
+
